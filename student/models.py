@@ -7,6 +7,7 @@ class profile_student(models.Model):
     university_no = models.CharField(max_length=255, null=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255, null=True)
+    roll_no = models.BigIntegerField(unique=False, null=True)
     branch = models.CharField(max_length=255, null=True)
     aadhar_no = models.BigIntegerField(unique=True, null=True)
     address = models.CharField(max_length=255, null=True)

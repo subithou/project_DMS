@@ -108,8 +108,8 @@ def view_faculty(request):
 
     return render(request, 'view_faculty.html',
                   {"staff_data": staff_details, "context": context, "data_for_self_profile": staff_details_1,
-                  'batch_data': batch_data
-                  })
+                   'batch_data': batch_data
+                   })
 
 
 def delete_faculty(request, f_id):
@@ -408,7 +408,8 @@ def create_batch(request):
                 messages.error(request, 'Successfully added the class ' + class_name + ' year ' + date_of_join)
 
     return render(request, 'create_batch.html',
-                  {"context": context, "scheme_data": scheme_data, "data_for_self_profile": staff_details_1, "tutor_data": tutor_data})
+                  {"context": context, "scheme_data": scheme_data, "data_for_self_profile": staff_details_1,
+                   "tutor_data": tutor_data})
 
 
 def view_batch(request):
@@ -432,7 +433,6 @@ def edit_batch(request, b_id):
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
 
-
     edit_data = batch.objects.get(id=b_id)
     join_date = str(edit_data.date_of_join)
     edit_scheme_id = edit_data.scheme
@@ -444,7 +444,7 @@ def edit_batch(request, b_id):
 
     subject_data = subject.objects.all()
     assign_subject_data = subject_to_staff.objects.filter(batch_id=b_id)
-    
+
     if request.method == 'POST':
         # class_name = request.POST.get('class_name')
         # date_of_join = request.POST.get('date_of_join')
@@ -496,10 +496,10 @@ def edit_batch(request, b_id):
                   {'edit_data': edit_data, 'context': context, 'scheme_data': scheme_data, 'date': join_date,
                    "data_for_self_profile": staff_details_1
                       , 'present_scheme': edit_scheme_data,
-                      'tutor_data':tutor_data,
-                      'student_data':student_data,
-                      'subject_data': subject_data,
-                      'assign_subject_data': assign_subject_data
+                   'tutor_data': tutor_data,
+                   'student_data': student_data,
+                   'subject_data': subject_data,
+                   'assign_subject_data': assign_subject_data
 
                    })
 
@@ -543,11 +543,12 @@ def create_scheme(request):
         if scheme_count:
             messages.error(request,
                            'Already exist ' + scheme_input)
-
+            return redirect(create_scheme)
         else:
             scheme.objects.create(scheme=scheme_input)
             messages.error(request,
                            'Successfully created ' + scheme_input)
+            return redirect(create_scheme)
 
     return render(request, 'create_scheme.html', {'context': context, "data_for_self_profile": staff_details_1})
 
@@ -592,8 +593,9 @@ def create_subject(request):
                                    scheme=scheme_id_int)
             messages.error(request, "The Subject " + subject_name + " successfully added")
 
-            return render(request, 'create_subject.html',
-                          {'context': context, 'scheme_data': scheme_data, "data_for_self_profile": staff_details_1})
+            return redirect(create_subject)
+            # return redirect(request, 'create_subject.html',
+             #             {'context': context, 'scheme_data': scheme_data, "data_for_self_profile": staff_details_1})
 
         else:
             messages.error(request, "The Subject code already exist!")
@@ -628,7 +630,7 @@ def view_subject(request):
     none = "None"
     staff_data = profile.objects.all()
     batch_data = batch.objects.all()
-    
+
     if 'view_subject' in request.POST:
         scheme_id = request.POST.get('scheme_id')
         scheme_id_int = int(scheme_id)
@@ -653,7 +655,7 @@ def view_subject(request):
                           {'context': context, 'scheme_data': scheme_data, 'view_subject': view_subject,
                            'scheme_input_id': scheme_input_id,
                            'scheme_name': scheme_name, "data_for_self_profile": staff_details_1,
-                           'assign_subject_data':assign_subject_data,
+                           'assign_subject_data': assign_subject_data,
                            'none': none,
                            'staff_data': staff_data,
                            'batch_data': batch_data
@@ -661,8 +663,8 @@ def view_subject(request):
 
     return render(request, 'view_subject.html',
                   {'context': context, 'scheme_data': scheme_data, "data_for_self_profile": staff_details_1,
-                   "view_subject": view_subject_all, 
-                   'assign_subject_data':assign_subject_data,
+                   "view_subject": view_subject_all,
+                   'assign_subject_data': assign_subject_data,
                    'none': none,
                    'staff_data': staff_data,
                    'batch_data': batch_data
@@ -728,7 +730,7 @@ def assign_subject_to_staff(request):
     faculty = profile.objects.all()
 
     if request.method == 'POST':
-        batch_id   = int(request.POST.get('batch_id'))
+        batch_id = int(request.POST.get('batch_id'))
         subject_id = int(request.POST.get('subject_id'))
         faculty_id = int(request.POST.get('faculty_id'))
         sem = int(request.POST.get('semester'))
@@ -741,7 +743,7 @@ def assign_subject_to_staff(request):
             for j in subject_id_data:
                 if i.scheme == j.scheme:
                     valid_scheme = True
-        
+
         if batch_id == 0:
             messages.error(request, "Select Class")
         elif subject_id == 0:
@@ -758,17 +760,17 @@ def assign_subject_to_staff(request):
             if check_exist:
                 messages.error(request, "Subject Exist")
             else:
-                subject_to_staff.objects.create(subject_id=subject_id, batch_id=batch_id, staff_id=faculty_id, semester=sem)
+                subject_to_staff.objects.create(subject_id=subject_id, batch_id=batch_id, staff_id=faculty_id,
+                                                semester=sem)
                 messages.error(request, "Successfully added")
-        
-        
 
-    return render(request, 'assign_subject_to_staff.html', {'context': context, "data_for_self_profile": staff_details_1,
-                'batch_class': batch_data_class,
-                'scheme_data': scheme_data,
-                'subject_data': subject_data,
-                'faculty': faculty
-                })
+    return render(request, 'assign_subject_to_staff.html',
+                  {'context': context, "data_for_self_profile": staff_details_1,
+                   'batch_class': batch_data_class,
+                   'scheme_data': scheme_data,
+                   'subject_data': subject_data,
+                   'faculty': faculty
+                   })
 
 
 def delete_subject(request, subject_id):
@@ -786,6 +788,8 @@ def batch_details(request, b_id):
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
     return render(request, 'batch_details.html', {'context': context, "data_for_self_profile": staff_details_1})
+
+
 # manage tutors
 
 def view_tutor(request):
@@ -794,6 +798,8 @@ def view_tutor(request):
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
     return render(request, 'view_tutor.html', {'context': context, "data_for_self_profile": staff_details_1})
+
+
 # logout
 def log_out(request):
     logout(request)
