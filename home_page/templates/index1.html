@@ -1,19 +1,4 @@
-{% extends 'base.html' %}
-{% load static %}
 
-{% block title %}
-Home
-{% endblock %}
-
-{% block login %}
-<li><a class="getstarted scrollto" href="{% url 'login' %}">Login</a></li>
-{% endblock %}
-
-{% block content %}
-
-
-<body>
-  
 
 
   <!-- ======= Hero Section ======= -->
@@ -522,7 +507,7 @@ The Department that stands tall since 1993  , brings life into the college as ea
                 <h4>Card 2</h4>
                 <p>Card</p>
                 <div class="portfolio-links">
-                  <a href="{% static 'img/portfolio/11.jpeg' %}" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Card 2"><i class="bx bx-plus"></i></a>
+                  <a href="{% static 'img/portfolio/11.jpeg.jpeg' %}" data-gallery="portfolioGallery" class="portfolio-lightbox" title="Card 2"><i class="bx bx-plus"></i></a>
                   <a href="portfolio-details.html" title="More Details"><i class="bx bx-link"></i></a>
                 </div>
               </div>
@@ -897,6 +882,26 @@ The Department that stands tall since 1993  , brings life into the college as ea
     </section><!-- End Contact Section -->
 
 
-  </body>
-  </main>
-{% endblock %}
+
+    url = 'https://ktu.edu.in/eu/core/announcements.htm'
+
+    try:
+        # url = 'https://ktu.edu.in/home.htm'
+
+        wanted_list = ['ANNOUNCEMENTS', 'Dec 24, 2021', 'Exam Registration opened - B.Tech S3 and S5 (supplementary) '
+                                                        'Jan 2022']
+        scraper = AutoScraper()
+        result = scraper.build(url, wanted_list)
+        data1 = result[0]
+        data2 = result[1]
+        data3 = result[2]
+
+        notif = {'data1': data1,
+                 'data2': data2,
+                 'data3': data3
+                 }
+        return render(request, 'index.html', {'notif': notif})
+
+    except:
+
+        notif = {'data1': "KTU site cannot reach"}
