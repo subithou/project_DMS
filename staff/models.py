@@ -25,7 +25,7 @@ class profile(models.Model):
     Examiner_institution = models.CharField(max_length=250, null=True)
     Area_of_Research = models.CharField(max_length=250, null=True)
     email = models.EmailField(null=True)
-    phone_no = models.PositiveIntegerField(null=True)
+    phone_no = models.BigIntegerField(null=True)
     
     
     def __str__(self):

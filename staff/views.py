@@ -363,32 +363,32 @@ def add_internal(request, batch_id, subject_id):
                 mark = request.POST.getlist(str(x))
                 print(mark)
 
-                exist_ass1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 1')
-                exist_ass2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 2')
-                exist_internal1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 1')
-                exist_internal2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 2')
+                exist_ass1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 1').count()
+                exist_ass2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 2').count()
+                exist_internal1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 1').count()
+                exist_internal2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 2').count()
                 print(exist_ass1, exist_ass2, exist_internal1, exist_internal2)
-                if exist_ass1:
+                if exist_ass1 > 0:
                     update_ass1 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 1')
                     update_ass1.mark = mark[0]
                     update_ass1.save()
 
-                if exist_ass2:
+                if exist_ass2 > 0:
                     update_ass2 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Assignment 2')
                     update_ass2.mark = mark[1]
                     update_ass2.save()
 
-                if exist_internal1:
+                if exist_internal1 > 0:
                     update_internal1 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 1')
                     update_internal1.mark = mark[2]
                     update_internal1.save()
                 
-                if exist_internal2:
+                if exist_internal2 > 0:
                     update_internal2 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem, exam_type='Internal 2')
                     update_internal2.mark = mark[3]
                     update_internal2.save()
 
-                if exist_ass1 == None and exist_ass2 == None and exist_internal1 == None and exist_internal2 == None  :
+                if exist_ass1 == 0 and exist_ass2 == 0 and exist_internal1 == 0 and exist_internal2 == 0  :
                     Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[0], exam_type='Assignment 1')
                     Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[1], exam_type='Assignment 2')
                     Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[2], exam_type='Internal 1')
@@ -466,7 +466,9 @@ def view_internal_result(request, batch_id, subject_id):
                 sum_of_mark = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id).aggregate(Sum('mark'))
                 total_internal = sum_of_mark['mark__sum']
                 mark_tupple = (i.register_no, total_internal)
+                # x print(mark_tupple)
         total_mark_list.append(mark_tupple)
+                #total_mark_list.append(mark_tupple)
 
     
 

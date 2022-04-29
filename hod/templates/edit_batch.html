@@ -352,7 +352,7 @@
                             <td>{{ i.first_name }} {{ i.last_name }}</td>
                             <td >{{ i.phone_no }}</td>
                             <td>{{ i.email }} </td>
-                            <td><a href="{% url 'edit_batch' b_id=i.id %}" ><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-eye btn-sm"></i> View</button></a> </td>
+                            <td><a href="{% url 'view_student_details' student_id=i.id %}" ><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-eye btn-sm"></i> View</button></a> </td>
                           </tr>
                       {% endfor %}
 
@@ -412,6 +412,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -444,7 +451,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
-                                    
+                                    <th>FACULTY</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -460,6 +467,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -491,6 +505,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -507,6 +522,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -538,6 +560,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -554,6 +577,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -585,6 +615,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -601,6 +632,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -632,6 +670,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -648,6 +687,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -680,6 +726,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -696,6 +743,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -728,6 +782,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -744,6 +799,13 @@
                                     <td>{{i.code}}</td>
                                     <td>{{i.subject_name}}</td>
                                     <td>{{i.credit}}</td>
+                                    <td>{% for k in staff_data %}
+                                      
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                      {% endfor %}
+                                    </td>
                                     {% endif %}
                                     {% endfor %}
                                         
@@ -788,6 +850,10 @@
                         </h2>
                         <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
+
+
+
+                            
                           </div>
                         </div>
                       </div>

@@ -4,6 +4,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.db.models import Sum
 
 import login
 from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, subject, subject_to_staff
@@ -442,7 +443,7 @@ def edit_batch(request, b_id):
 
     edit_scheme_data = scheme.objects.get(id=edit_scheme_id)
     student_data = profile_student.objects.filter(batch=b_id)
-
+    staff_data = profile.objects.all()
     subject_data = subject.objects.all()
     assign_subject_data = subject_to_staff.objects.filter(batch_id=b_id)
 
@@ -501,7 +502,8 @@ def edit_batch(request, b_id):
                    'tutor_data': tutor_data,
                    'student_data': student_data,
                    'subject_data': subject_data,
-                   'assign_subject_data': assign_subject_data
+                   'assign_subject_data': assign_subject_data,
+                   'staff_data':staff_data
 
                    })
 
@@ -876,6 +878,135 @@ def subject_wise_report(request, subject_id, batch_id):
         'attendance_list':attenance_list,
         'total_mark_list':total_mark_list
     })
+
+def view_student_details(request, student_id):
+    staff_id = request.session['hod_username']
+    staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
+    name = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': name}
+    
+    print(student_id)
+    id = int(student_id)
+    student_data = profile_student.objects.filter(id=id)
+
+    for i in student_data:
+        batch_id = i.batch
+        date_of_birth = i.date_of_birth
+        name_first = i.first_name
+        name_last = i.last_name
+
+    
+
+    batch_data = batch.objects.get(id=batch_id)
+    scheme_id = batch_data.scheme
+    scheme_data = scheme.objects.get(id=scheme_id)
+    assign_subject_data = subject_to_staff.objects.filter(batch_id=batch_id)
+    subject_data = subject.objects.all()
+    date_dob = str(date_of_birth)  # dob can only display in html only as string type
+    internal_mark_data = Internal_mark.objects.filter(student_id=student_id)
+    for i in internal_mark_data:
+        print(i.exam_type, i.mark)
+    total_mark_list = []
+    for i in assign_subject_data:
+
+        sum_of_mark = Internal_mark.objects.filter(student_id=id, subject_id=i.subject_id).aggregate(Sum('mark'))
+        total_internal = sum_of_mark['mark__sum']
+        st_data = profile_student.objects.get(id=id)
+        mark_tupple = (i.subject_id, st_data.register_no,i.semester, total_internal)
+                # x print(mark_tupple)
+        total_mark_list.append(mark_tupple)
+
+    print(total_mark_list)
+    if 'edit_profile' in request.POST:
+
+        f_name = request.POST.get('first_name')
+        l_name = request.POST.get('last_name')
+        gender = request.POST.get('gender')
+        dob = request.POST.get('date_of_birth')
+        ph_no = request.POST.get('phone_no')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        aadhaar_no = request.POST.get('aadhaar_no')
+        caste = request.POST.get('caste')
+        religion = request.POST.get('religion')
+        nationality = request.POST.get('nationality')
+        native_place = request.POST.get('native_place')
+        blood_group = request.POST.get('blood_group')
+        university_no = request.POST.get('university_no')
+        roll_no = request.POST.get('roll_no')
+
+        if gender == '0':
+            messages.error(request, "Please select a valid Gender")
+            return redirect(view_student_details, student_id)
+        elif blood_group == '0':
+            messages.error(request, "Please select a valid blood Group")
+            return redirect(view_student_details, student_id)
+        else:
+            
+            student_data1 = profile_student.objects.get(id=id)
+            username = student_data1.register_no
+            user_data = User.objects.get(username=username)
+
+            user_data.first_name = f_name
+            user_data.last_name = l_name
+            user_data.save()  # update the first and second name in login table
+
+            student_data1.university_no = university_no
+            student_data1.roll_no = roll_no
+            student_data1.first_name = f_name
+            student_data1.first_name = f_name
+            student_data1.last_name = l_name
+            student_data1.aadhar_no = aadhaar_no
+            student_data1.address = address
+            student_data1.phone_no = ph_no
+            student_data1.email = email
+            student_data1.sex = gender
+            student_data1.date_of_birth = dob
+            student_data1.nationality = nationality
+            student_data1.religion = religion
+            student_data1.caste = caste
+            student_data1.native_place = native_place
+            student_data1.blood_group = blood_group
+
+            student_data1.save()
+
+            messages.error(request, "Successfully updated")
+            return redirect(view_student_details, student_id)
+
+    if 'change_password' in request.POST:
+        # current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        renew_password = request.POST.get('renew_password')
+        student_data1 = profile_student.objects.get(id=id)
+
+        user_data = User.objects.get(username=student_data1.register_no)
+        user_password = user_data.password
+
+        if new_password != renew_password:
+            messages.error(request, "Password mismatch")
+            return redirect(view_student_details, student_id)
+        #elif current_password != user_password:
+        #    messages.error(request, "incorrect old password")
+        else:
+            user_data.password = new_password
+            user_data.save()
+            messages.error(request, "Successfully changed password")
+            return redirect(view_student_details, student_id)
+
+    return render(request, 'view_student_details.html',
+                  {
+                      'student_data': student_data, 
+                      'scheme_data': scheme_data, 
+                      'batch_data': batch_data,
+                      'date_dob': date_dob, 
+                      'context': context,
+                      'assign_subject_data':assign_subject_data,
+                      'subject_data':subject_data,
+                      'internal_mark_data': internal_mark_data,
+                      "data_for_self_profile": staff_details_1,
+                      'total_mark_list':total_mark_list
+                    })
+
 
 # logout
 def log_out(request):
