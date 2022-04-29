@@ -1,5 +1,5 @@
 from django.urls import path, include
-from hod.views import assign_subject_to_staff, delete_subject, hod_index, add_staff, log_out, view_faculty, add_student, create_batch, view_student, view_tutor
+from hod.views import assign_subject_to_staff, delete_subject, hod_index, add_staff, log_out, subject_wise_report, view_faculty, add_student, create_batch, view_student, view_tutor
 from hod.views import view_batch, edit_batch, delete_batch, delete_faculty, faculty_profile, create_scheme
 from hod.views import view_scheme, create_subject, view_subject, edit_subject
 from hod.views import check_subject_exist, check_user_exist, batch_details
@@ -31,6 +31,7 @@ urlpatterns = [
     path('check_subject_exist', check_subject_exist, name='check_subject_exist'),
     path('check_user_exist', check_user_exist, name='check_user_exist'),
     path('batch_details/<b_id>/', batch_details, name='batch_details'),
+    path('subject_wise_report/<int:subject_id>/<int:batch_id>/', subject_wise_report, name='subject_wise_report' ),
 
 
 

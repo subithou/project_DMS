@@ -156,8 +156,8 @@
             <th>SUBJECT NAME</th>
             <th>SUBJECT CREDIT</th>
             <th>SCHEME</th>
-            <th>FACULTY</th>]
-            <th>SEMESTER</th>
+            <th>FACULTY</th>
+            
             <th>CLASS</th>
             <!--<th colspan="2"></th>-->
             
@@ -180,36 +180,37 @@
               {% endfor %}
             </td>
 
-            <td>
+            
             {% for s in assign_subject_data %}
 
               {% if i.id == s.subject_id %}
+              <td>
                 {% for staff in staff_data %}
                   {% if staff.id == s.staff_id %}
                     {{staff.First_name}} {{staff.Last_name}}
                   {% endif %}
 
                 {% endfor %}
+
+              </td>
+              <td>
+                
+                    {% for batch in batch_data %}
+    
+                      {% if s.batch_id == batch.id %}
+                      S{{batch.semester}} {{batch.class_name}} 
+    
+                      {% endif %}
+                    {% endfor %}
+                  
+              </td>
+
               {% endif %}
 
             {% endfor %}
-          </td>
+          
 
-          <td>
-            {% for s in assign_subject_data %}
-            
-              {% if i.id == s.subject_id %}
-                {% for batch in batch_data %}
-
-                  {% if s.batch_id == batch.id %}
-                  S{{batch.semester}} {{batch.class_name}} 
-
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-            
-            {% endfor %}
-          </td>
+          
             
 
 

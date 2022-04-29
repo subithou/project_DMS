@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 
 import login
-from hod.models import batch, scheme, subject, subject_to_staff
+from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, subject, subject_to_staff
 from login.models import User
 from staff.models import profile
 from student.models import profile_student
@@ -43,9 +43,10 @@ def hod_index(request):
         staff_count = profile.objects.all().count()
         student_count = profile_student.objects.all().count()
 
-        return render(request, 'hod_index.html',
-                      {"staff_count": staff_count, "student_count": student_count, "context": context,
-                       "data_for_self_profile": staff_details_1})
+        #return render(request, 'hod_index.html',
+        #              {"staff_count": staff_count, "student_count": student_count, "context": context,
+        #               "data_for_self_profile": staff_details_1})
+        return redirect(view_faculty)
     else:
         return redirect(login.views.login)
 
@@ -493,7 +494,8 @@ def edit_batch(request, b_id):
             '''
 
     return render(request, 'edit_batch.html',
-                  {'edit_data': edit_data, 'context': context, 'scheme_data': scheme_data, 'date': join_date,
+                  {
+                      'edit_data': edit_data, 'context': context, 'scheme_data': scheme_data, 'date': join_date,
                    "data_for_self_profile": staff_details_1
                       , 'present_scheme': edit_scheme_data,
                    'tutor_data': tutor_data,
@@ -799,6 +801,81 @@ def view_tutor(request):
     context = {'name': name}
     return render(request, 'view_tutor.html', {'context': context, "data_for_self_profile": staff_details_1})
 
+
+
+def subject_wise_report(request, subject_id, batch_id):
+    print(subject_id)
+    user_id = request.session['id']
+    staff_details = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details.First_name + " " + staff_details.Last_name
+    context = {'name': fullname}
+
+    student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
+    subject_data = subject.objects.filter(id=subject_id)
+    batch_data = batch.objects.filter(id=batch_id)
+
+    # staff_id = staff_details.id
+    # check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+    internal_mark = Internal_mark.objects.filter()
+
+    
+    total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id).aggregate(Sum('no_of_hours'))
+
+    attendance_record_data = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id)
+    total_hour = total_attendance['no_of_hours__sum']
+    if total_hour == None:
+        messages.error(request, "Attendance not entered ")
+        return redirect(edit_batch, batch_id)
+    print(total_attendance, total_hour, type(total_hour))
+    
+    
+
+    
+    attendance_data = attendance.objects.filter(batch_id=batch_id, subject_id=subject_id)
+
+    attenance_list = []
+    for i in student_data:
+        hour = 0
+        for j in attendance_data:
+            if i.id == j.student_id:
+                if j.present == True:
+                    id1 =j.attendance_record_id
+                    # print('id',id1, type(id1))
+                    no_of_hours_taken = attendance_record.objects.get(id=id1)
+                    
+                    hour = hour +  int(no_of_hours_taken.no_of_hours)
+
+        percentage_attendance = (hour/total_hour)*100
+        # print(i.first_name, hour)
+        att_tuple = (i.register_no, percentage_attendance)
+        attenance_list.append(att_tuple)   
+
+    mark_data = Internal_mark.objects.filter(subject_id=subject_id)
+
+    total_mark_list = []
+    for i in student_data:
+        for j in mark_data:
+            if i.id == j.student_id:
+                sum_of_mark = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id).aggregate(Sum('mark'))
+                total_internal = sum_of_mark['mark__sum']
+                mark_tupple = (i.register_no, total_internal)
+        total_mark_list.append(mark_tupple)
+
+
+
+    return render(request, 'hod_subject_wise_report.html',
+    {
+        'context':context,
+        'student_data':student_data,
+        'subject_data':subject_data,
+        'batch_data':batch_data,
+        # 'check_subject_exist': check_subject_exist,
+        'internal_mark':internal_mark,
+        'attendance_data':attendance_data,
+        'attendance_record_data':attendance_record_data,
+        'attendance_list':attenance_list,
+        'total_mark_list':total_mark_list
+    })
 
 # logout
 def log_out(request):

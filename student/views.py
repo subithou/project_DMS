@@ -13,14 +13,16 @@ def student_index(request):
     # id = request.session['student_id']
     context = {'name': name}
 
-    return render(request, 'student_index.html', {'context': context})
-
+    #return render(request, 'student_index.html', {'context': context})
+    return redirect(student_profile)
 
 def student_profile(request):
     # name = request.session['student_name']
     id = request.session['student_id']
     student_data = profile_student.objects.filter(register_no=id)
+
     for i in student_data:
+        
         batch_id = i.batch
         date_of_birth = i.date_of_birth
         name_first = i.first_name
@@ -82,9 +84,10 @@ def student_profile(request):
             student_data1.save()
 
             messages.error(request, "Successfully updated")
-            return render(request, 'student_profile.html',
-                          {'student_data': student_data, 'scheme_data': scheme_data, 'batch_data': batch_data,
-                           'date_dob': date_dob, 'context': context})
+            #return render(request, 'student_profile.html',
+            #              {'student_data': student_data, 'scheme_data': scheme_data, 'batch_data': batch_data,
+            #               'date_dob': date_dob, 'context': context})
+            return redirect(student_profile)
 
     if 'change_password' in request.POST:
         current_password = request.POST.get('current_password')

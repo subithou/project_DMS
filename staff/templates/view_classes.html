@@ -52,8 +52,8 @@
   td:nth-of-type(3):before { content: "SUBJECT NAME"; }
   td:nth-of-type(4):before { content: "SUBJECT CREDIT"; }
   td:nth-of-type(5):before { content: "SCHEME"; }
-  td:nth-of-type(6):before { content: "CLASS"; }
-  td:nth-of-type(7):before { content:  }
+  td:nth-of-type(6):before { content: "FACULTY"; }
+  td:nth-of-type(7):before { content: "CLASS"; }
 
 
 }
@@ -61,7 +61,7 @@
 <main id="main" class="main">
     <div class="col-lg-12">
       <div class="pagetitle">
-        <h1>Subjects</h1>
+        <h1>Classes</h1>
         <br/>
       </div><!-- End Page Title -->
 
@@ -79,20 +79,19 @@
       <div class="card-body">
         <br/>
         
-       
+       <br/>
        <div>
 
       <table class='datatable'>
          <br>
-        
+         
         <thead >
           <tr>
             <th >SI NO</th>
-            <th>SUBJECT CODE</th>
-            <th>SUBJECT NAME</th>
-            <th>SUBJECT CREDIT</th>
-            <th>SCHEME</th>
             <th>CLASS</th>
+            <th>SEMESTER</th>
+            <th>SCHEME</th>
+            <th></th>
             <th></th>
             <!--<th colspan="2"></th>-->
 
@@ -100,68 +99,46 @@
           </tr>
         </thead>
         <tbody>
-          {% for i in subject_to_this_staff %}
+          {% for i in batch_data %}
 
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>
-            {% for j in view_subject %}
-                {% if i.subject_id == j.id %}
-                    {{ j.code }}
-
-                {% endif %}
-            {% endfor %}
+              {{i.class_name}}
             </td>
 
             <td>
-            {% for j in view_subject %}
-                {% if i.subject_id == j.id %}
-                    {{ j.subject_name }}
-                {% endif %}
-            {% endfor %}
+              {{i.semester}}
             </td>
 
-            <td>
-            {% for j in view_subject %}
-                {% if i.subject_id == j.id %}
-                    {{ j.credit }}
-
-                {% endif %}
-            {% endfor %}
-            </td>
-
-            <td>
-            {% for j in view_subject %}
-                {% if i.subject_id == j.id %}
-                    {% for scheme in scheme_data %}
-                        {% if j.scheme == scheme.id %}
-                            {{ scheme.scheme }}
-                        {% endif %}
-                    {% endfor %}
-
-                {% endif %}
-            {% endfor %}
-            </td>
+            
+            
 
           <td>
-                {% for batch in batch_data %}
-                  {% if i.batch_id == batch.id %}
-                    S{{batch.semester}} {{batch.class_name}}
-                  {% endif %}
-                {% endfor %}
+            {% for j in scheme_data %}
+            {% if i.scheme == j.id %}
+                {{ j.scheme }}
+
+            {% endif %}
+        {% endfor %}
           </td>
 
 
 
 
               <td>
-                {% for batch in batch_data %}
-                {% if i.batch_id == batch.id %}
-                  <a href="{% url 'update_class' batch_id=batch.id subject_id=i.subject_id %}"><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-pencil-square"></i> Update</button></a> 
-                {% endif %}
-                {% endfor %}
+                
+                  <a href="{% url 'update_class_of_tutor' batch_id=i.id %}"><button type="button" class="btn btn-success"><i class="bi bi-eye-fill"> </i> View</button></a> 
+               
               
               </td>
+              <!--
+              <td>
+                
+                <a href="{% url 'university_result' batch_id=i.id %}"><button type="button" class="btn btn-primary"><i class="bi bi-eye-fill"> </i> Add Result</button></a> 
+             
+            
+            </td>-->
              <!--<td><a href="{% url 'delete_subject' subject_id=i.id %}" onclick="return confirm('Are you sure you want to delete this?')"><button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Delete</button></a> </td>
           -->
           

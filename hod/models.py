@@ -46,7 +46,6 @@ class subject_to_staff(models.Model):
         name = self.subject_id
         return name
 
-
 class Internal_mark(models.Model):
     student_id = models.BigIntegerField(null=False)
     subject_id = models.BigIntegerField(null=False)
@@ -56,10 +55,13 @@ class Internal_mark(models.Model):
         ('Assignment 2', 'Assignment 2'),
         ('Internal 1', 'Internal 1'),
         ('Internal 2', 'Internal 2'),
+        
     ]
     exam_type = models.CharField(max_length=255, choices=exm_type, null=False)
     semester = models.BigIntegerField(null=False)
     mark = models.FloatField(null=False)
+    
+
 
 
 
@@ -89,4 +91,4 @@ class attendance(models.Model):
     subject_id = models.BigIntegerField(unique=False, null=False)
     batch_id = models.BigIntegerField(unique=False, null=False)
     present = models.BooleanField(null=False)
-    semester = models.BigIntegerField(max_length=255, null=False)
+    semester = models.BigIntegerField( null=False)

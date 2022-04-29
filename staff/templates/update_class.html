@@ -134,9 +134,10 @@ tr td:first-child:before
 
       <div class="card-body">
           
-
+        <br>
         <form method="post" class="row g-3 needs-validation" >
              {% csrf_token %}
+          <br>
 
 
             {% for message in messages %}
@@ -285,7 +286,7 @@ tr td:first-child:before
                             <td>{{ forloop.counter }}</td>
                             <td>{{ i.date }} </td>
                             <td>{{i.from_time}} to {{i.end_time}} </td>
-                            <td colspan=2><button class="btn btn-danger" disabled>Submitted</button>&nbsp;&nbsp;&nbsp;<a href="{% url 'view_attendance' record_id=i.id batch_id=i.batch_id subject_id=i.subject_id%}"> <button class="btn btn-success" type="button" name="view_attendance"><i class="bi bi-eye-fill"> View</i></button></a></td>
+                            <td colspan=2><button class="btn btn-danger" disabled>Submitted</button>&nbsp;&nbsp;&nbsp;<a href="{% url 'view_attendance' record_id=i.id batch_id=i.batch_id subject_id=i.subject_id%}"> <button class="btn btn-success" type="button" name="view_attendance"><i class="bi bi-eye-fill"></i> View</button></a></td>
                            </tr>                             
                            {% endfor %}
                            

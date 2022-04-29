@@ -1,4 +1,4 @@
-{% extends 'hod_base.html' %}
+{% extends 'staff_base.html' %}
 {% load static %}
 
 {% block content %}
@@ -38,10 +38,11 @@
           text-align: left;
       }
       
-      #datatable td:nth-of-type(1):before { content: "SI NO"; }
-      #datatable td:nth-of-type(2):before { content: "CODE"; }
-      #datatable td:nth-of-type(3):before { content: "SUBJECT NAME"; }
-      #datatable td:nth-of-type(4):before { content: "CREDIT"; }
+      #datatable td:nth-of-type(1):before { content: "ROLL NO"; }
+      #datatable td:nth-of-type(2):before { content: "ADMISSION NO"; }
+      #datatable td:nth-of-type(3):before { content: "NAME"; }
+      #datatable td:nth-of-type(4):before { content: "PHONE NO"; }
+      #datatable td:nth-of-type(5):before { content: "EMAIL"; }
      
   }
   
@@ -84,7 +85,7 @@
         td:nth-of-type(4):before { content: "SEMESTER"; }
         td:nth-of-type(5):before { content: "SCHEME"; }
         td:nth-of-type(6):before { content: "EDIT"; }
-        td:nth-of-type(7):before { content: "DELETE"; }
+        
     }
   
   
@@ -99,7 +100,7 @@
 
     <div class="col-lg-6">
         <div class="container">
-          <h2 class="card-title-size">View batch</h2>
+          <h2 class="card-title-size">S{{batch_data.semester}} {{batch_data.class_name}}</h2>
 
             <br/>
         </div>
@@ -128,7 +129,7 @@
             <br>
             <div class="col-6">
                       <label for="yourName" class="col-sm-2 col-form-label">Class</label>
-                      <input type="text" name="class_name" class="form-control" value={{edit_data.class_name}} readonly>
+                      <input type="text" name="class_name" class="form-control" value={{batch_data.class_name}} readonly>
                       <!--
                         <select name="class_name" class="form-control" readonly required >
                           {% if edit_data.class_name == 'CSE-B' %}
@@ -162,9 +163,9 @@
                     <div class="col-6">
                       <label class="col-sm-2 col-form-label">Semester</label>
                       <div class="col-sm-12">
-                        <select class="form-select" name="semester" aria-label="Default select example" required>
+                        <select class="form-select" name="semester" aria-label="Default select example" readonly>
                           
-                          {% if edit_data.semester == '1' %}
+                          {% if batch_data.semester == '1' %}
                           <option value="1" selected>1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -174,7 +175,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
 
-                          {% elif edit_data.semester == '2' %}
+                          {% elif batch_data.semester == '2' %}
                           <option value="1">1</option>
                           <option value="2" selected>2</option>
                           <option value="3">3</option>
@@ -184,7 +185,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
         
-                          {% elif edit_data.semester == '3' %}
+                          {% elif batch_data.semester == '3' %}
                           <option value="1"> 1</option>
                           <option value="2">2</option>
                           <option value="3" selected>3</option>
@@ -194,7 +195,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
         
-                          {% elif edit_data.semester == '4' %}
+                          {% elif batch_data.semester == '4' %}
                           <option value="1" >1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -204,7 +205,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
         
-                          {% elif edit_data.semester == '5' %}
+                          {% elif batch_data.semester == '5' %}
                           <option value="1" >1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -214,7 +215,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
         
-                          {% elif edit_data.semester == '6' %}
+                          {% elif batch_data.semester == '6' %}
                           <option value="1" >1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -224,7 +225,7 @@
                           <option value="7">7</option>
                           <option value="8">8</option>
 
-                          {% elif edit_data.semester == '7' %}
+                          {% elif batch_data.semester == '7' %}
                           <option value="1" >1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -235,7 +236,7 @@
                           <option value="8">8</option>
 
 
-                          {% elif edit_data.semester == '8' %}
+                          {% elif batch_data.semester == '8' %}
                           <option value="1" >1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
@@ -246,14 +247,7 @@
                           <option value="8" selected>8</option>
                           {% else%}
                           
-                          <option value="1" >1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-                          <option value="8">8</option>
+                          
 
                           {% endif %}
 
@@ -264,12 +258,15 @@
                       <label class="col-sm-2 col-form-label">Tutor</label>
                       <div class="col-sm-12">
                         <select class="form-select" name="tutor" aria-label="Default select example" required>
-                          {% for i in tutor_data %}
-                              {% if edit_data.tutor_id == i.id %}
-                              <option value='{{i.id}}' selected>{{i.First_name}} {{i.Last_name}}</option>
+                          
+                            {% for j in staff_data %}
+                              {% if j.id == batch_data.tutor_id %}
+                                <option value='{{j.id}}' selected>{{j.First_name}} {{j.Last_name}}</option>
                               {% endif %}
-                          <option value='{{i.id}}'>{{i.First_name}} {{i.Last_name}}</option>
-                          {% endfor %}
+                            {% endfor %}
+                              
+
+                          
                           
                         </select>
                       </div>
@@ -280,7 +277,15 @@
 
                     <div class="col-6">
                       <label for="yourName" class="col-sm-2 col-form-label">Scheme</label>
-                      <input type="text" class="form-control" value={{present_scheme.scheme}}  readonly>
+                      
+                      <input type="text" class="form-control" 
+                      {% for i in scheme_data %}
+                       {% if i.id == batch_data.scheme %}
+                       value="{{i.scheme}} "
+                       {% endif %}
+                      
+                      {% endfor %}
+                       readonly>
                       <!--
                         <select name="scheme" class="form-control" readonly required >
 
@@ -300,7 +305,7 @@
                     </div>
                     <div class="col-2" >
                       <label class="form-label"><br></label>
-                      <button class="btn btn-primary w-20 form-control" style="width: 94px;" type="submit"> Update </button>
+                      <button class="btn btn-primary w-20 form-control" name="update_semester" style="width: 94px;" type="submit"> Update </button>
                     </div>
             <!--
                     <div class="col-12">
@@ -352,7 +357,7 @@
                             <td>{{ i.first_name }} {{ i.last_name }}</td>
                             <td >{{ i.phone_no }}</td>
                             <td>{{ i.email }} </td>
-                            <td><a href="{% url 'edit_batch' b_id=i.id %}" ><button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-eye btn-sm"></i> View</button></a> </td>
+                            <td><a href="{% url 'update_student_profile'  student_id=i.id %}" ><button type="button" class="btn btn-success"><i class="bi bi-eye btn-sm"></i> View</button></a> </td>
                           </tr>
                       {% endfor %}
 
@@ -396,6 +401,7 @@
                                     <th>NAME</th>
                                     <th>CREDIT</th>
                                     <th>FACULTY</th>
+                                    <th></th>
                                     
                                 </tr>
                                 </thead>
@@ -414,7 +420,16 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
-                                        
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+                                      <td>
+                                        <a href="{% url 'subject_wise_report' subject_id=j.subject_id batch_id=batch_data.id %}" ><button type="button" class="btn btn-success"><i class="bi bi-eye btn-sm"></i> View</button></a>
+                                      </td>
                                   </tr>
                                   {% endif %}
                               {% endfor %}
@@ -444,6 +459,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -462,6 +478,13 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
                                         
                                   </tr>
                                   {% endif %}
@@ -491,6 +514,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -509,6 +533,13 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
                                         
                                   </tr>
                                   {% endif %}
@@ -538,6 +569,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -556,6 +588,13 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
                                         
                                   </tr>
                                   {% endif %}
@@ -585,6 +624,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -603,7 +643,13 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
-                                        
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
                                   </tr>
                                   {% endif %}
                               {% endfor %}
@@ -632,6 +678,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -650,6 +697,13 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
                                         
                                   </tr>
                                   {% endif %}
@@ -680,6 +734,8 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
+                                    <th></th>
                                     
                                 </tr>
                                 </thead>
@@ -698,7 +754,17 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
-                                        
+
+                                    <td>
+                                    {% for k in staff_data %}
+                                      {% if k.id == j.staff_id %}
+                                        {{k.First_name}} {{k.Last_name}}
+                                      {% endif %}
+                                    {% endfor %}
+                                    </td>
+                                    <td>
+                                      <a href="{% url 'subject_wise_report' subject_id=j.subject_id batch_id=batch_data.id %}" ><button type="button" class="btn btn-success"><i class="bi bi-eye btn-sm"></i> View</button></a>
+                                    </td>
                                   </tr>
                                   {% endif %}
                               {% endfor %}
@@ -728,6 +794,7 @@
                                     <th>CODE</th>
                                     <th>NAME</th>
                                     <th>CREDIT</th>
+                                    <th>FACULTY</th>
                                     
                                 </tr>
                                 </thead>
@@ -746,7 +813,14 @@
                                     <td>{{i.credit}}</td>
                                     {% endif %}
                                     {% endfor %}
-                                        
+                                    <td>
+                                      {% for k in staff_data %}
+                                        {% if k.id == j.staff_id %}
+                                          {{k.First_name}} {{k.Last_name}}
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+                                    
                                   </tr>
                                   {% endif %}
                               {% endfor %}
@@ -788,7 +862,8 @@
                         </h2>
                         <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -800,7 +875,8 @@
                         </h2>
                         <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -812,7 +888,8 @@
                         </h2>
                         <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -824,7 +901,8 @@
                         </h2>
                         <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="heading13" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -836,7 +914,8 @@
                         </h2>
                         <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="heading14" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -848,7 +927,8 @@
                         </h2>
                         <div id="collapse15" class="accordion-collapse collapse" aria-labelledby="heading15" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -860,7 +940,8 @@
                         </h2>
                         <div id="collapse16" class="accordion-collapse collapse" aria-labelledby="heading16" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                          </div>
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->                          </div>
                         </div>
                       </div>
 
@@ -872,6 +953,8 @@
                         </h2>
                         <div id="collapse17" class="accordion-collapse collapse" aria-labelledby="heading17" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
+<!--                            <strong>This is the first item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+-->
                           </div>
                         </div>
                       </div>

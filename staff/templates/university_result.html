@@ -34,8 +34,8 @@
         content: attr(data-label);
         position: absolute;
         left:0;
-        width: 75%;
-        padding-left: 40px;
+        width: 50%;
+        padding-left: 30px;
         font-size:15px;
         font-weight: bold;
         text-align: left;
@@ -62,19 +62,9 @@
 <main id="main" class="main">
 <div class="col-lg-6">
     <div class="container">
-      <h2 class="card-title-size">Internal Marks</h2>
+      <h2 class="card-title-size">Add University Result</h2>
       
-      {% for j in subject_data %}
-      <h6>Subject : {{j.code}} {{j.subject_name}}</h6>
-      {% endfor %}
-
-      {% for j in batch_data %}
-      <h6>Class : {{j.class_name}}</h6>      
-      {% endfor %}
-
-      {% for i in check_subject_exist %}
-        <h6>Semester : {{i.semester}}</h6>
-      {% endfor %}
+      
 
       
         <br/>
@@ -90,17 +80,33 @@
     <br>
 <form method="post" class="row g-3 needs-validation" >
     {% csrf_token %}
-    
-    <table class="table" >
+
+    <div class="col-12">
+      <input type="number"  class="form-control" name="semester" min="1" max="8"  required>
+    </div>
+    <button type="submit" class="btn btn-primary " style="width:15%;float:right" name="semester" >Submit</button>
+
+</form>
+
+<form method="post" class="row g-3 needs-validation" >
+  {% csrf_token %}
+ <table class="table" models.BigIntegerField(null=False)>
         <thead>
           <tr>
             
-            <th >Roll No</th>
-            <th >Name</th>
-            <th >Assignment 1</th>
-            <th >Assignment 2</th>
-            <th >Series 1</th>
-            <th >Series 2</th>
+            <th>University No</th>
+            
+            <th>Name</th>
+            {% for i in subject_this_sem %}
+              {% for j in subject_data %}
+                {% if j.id == i.subject_id %}
+                  <th>{{i.code}}</th>
+                {% endif %}
+              
+              {% endfor %}
+            
+            
+            {% endfor %}
             
           </tr>
         </thead>
@@ -110,7 +116,7 @@
             
             <tr>
                 
-                <td>{{i.roll_no}}</td>
+                <td>{{i.university_no}}</td>
                 <td>{{i.first_name}} {{i.last_name}}</td>
                 
                 <td class="count-me">
@@ -203,8 +209,7 @@
         </tbody>
         
       </table>
-
-      <button type="submit" class="btn btn-primary " style="float:right" name="internal" >Submit</button>
+      <button type="submit" class="btn btn-primary " style="width:15%;float:right" name="internal" >Submit</button>
       
 </form>
 </div>
