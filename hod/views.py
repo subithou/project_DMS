@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from django.db.models import Sum
 
 import login
-from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, subject, subject_to_staff
+from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
 from login.models import User
 from staff.models import profile
 from student.models import profile_student
@@ -907,6 +907,9 @@ def view_student_details(request, student_id):
     for i in internal_mark_data:
         print(i.exam_type, i.mark)
     total_mark_list = []
+    attendance_list = []
+    sem_result_list = []
+
     for i in assign_subject_data:
 
         sum_of_mark = Internal_mark.objects.filter(student_id=id, subject_id=i.subject_id).aggregate(Sum('mark'))
@@ -916,7 +919,43 @@ def view_student_details(request, student_id):
                 # x print(mark_tupple)
         total_mark_list.append(mark_tupple)
 
-    print(total_mark_list)
+        total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id).aggregate(Sum('no_of_hours'))
+        attendance_record_data = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
+        total_hour = total_attendance['no_of_hours__sum']
+        print('total_hour',total_hour, type(total_hour))
+        attendance_data = attendance.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
+
+        if total_hour == None:
+            att_tuple = (i.subject_id, st_data.register_no,i.semester, 0)
+            attendance_list.append(att_tuple)
+
+        else:
+            hour = 0
+            for j in attendance_data:
+                if st_data.id == j.student_id:
+                    if j.present == True:
+                        id1 =j.attendance_record_id
+                        # print('id',id1, type(id1))
+                        no_of_hours_taken = attendance_record.objects.get(id=id1)
+                    
+                        hour = hour +  no_of_hours_taken.no_of_hours
+            percentage_attendance = round((hour/total_hour)*100, 2)
+            print(st_data.first_name, hour)
+            att_tuple = (i.subject_id, st_data.register_no,i.semester, percentage_attendance)
+            attendance_list.append(att_tuple)
+
+
+        sem_result_data = semester_result.objects.filter(subject_id = i.subject_id)
+        for result in sem_result_data:
+            sem_result_tuple = (i.subject_id, st_data.register_no,i.semester, result.grade_point, result.no_of_chances)
+            sem_result_list.append(sem_result_tuple)
+    #print(attendance_list)    
+    # print(total_mark_list)
+
+    
+
+    
+
     if 'edit_profile' in request.POST:
 
         f_name = request.POST.get('first_name')
@@ -1004,7 +1043,9 @@ def view_student_details(request, student_id):
                       'subject_data':subject_data,
                       'internal_mark_data': internal_mark_data,
                       "data_for_self_profile": staff_details_1,
-                      'total_mark_list':total_mark_list
+                      'total_mark_list':total_mark_list,
+                      'attendance_list' : attendance_list,
+                      'sem_result_list': sem_result_list
                     })
 
 

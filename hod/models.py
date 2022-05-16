@@ -67,12 +67,12 @@ class Internal_mark(models.Model):
 
 
 class semester_result(models.Model):
-    university_no = models.CharField(max_length=255, null=False)
-    subject_code = models.CharField(max_length=255, null=False)
+    university_no = models.CharField(max_length=255, null=False, unique=False)
+    subject_id = models.BigIntegerField(null=False)
     grade_point = models.BigIntegerField(null=False)
     no_of_chanses = models.BigIntegerField(null=False)
-    semester = models.CharField(max_length=255, null=False)
-    scheme = models.CharField(max_length=255, null=False)
+    semester = models.BigIntegerField(null=False)
+    scheme = models.BigIntegerField(null=False)
 
 
 class attendance_record(models.Model):
