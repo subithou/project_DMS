@@ -1,3 +1,4 @@
+from calendar import month
 from datetime import date, datetime
 from email import message
 from functools import total_ordering
@@ -14,7 +15,7 @@ from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
-from hod.models import  Internal_mark, attendance_record, scheme, subject, subject_to_staff, batch, attendance
+from hod.models import  Internal_mark, attendance_record, scheme, semester_result, subject, subject_to_staff, batch, attendance
 from staff.models import profile
 from login.models import User
 from student.models import profile_student
@@ -529,6 +530,11 @@ def update_class_of_tutor(request, batch_id):
     student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
     subject_data = subject.objects.all()
     assign_subject_data = subject_to_staff.objects.filter(batch_id=batch_id)
+    sem_result = semester_result.objects.filter(batch_id=batch_id)
+
+    subject_in_sem = subject_to_staff.objects.filter(batch_id=batch_id)
+    #all_subject = subject.objects.all()
+
 
     if 'update_semester' in request.POST:
         sem = request.POST.get('semester')
@@ -538,6 +544,7 @@ def update_class_of_tutor(request, batch_id):
         batch_data_update.save()
         messages.error(request,'Successfully Updated the semester')
         return redirect(update_class_of_tutor,batch_id)
+
     return render(request, 'update_class_of_tutor.html',
     {
                       
@@ -548,13 +555,16 @@ def update_class_of_tutor(request, batch_id):
         'date':join_date,
         'student_data':student_data,
         'assign_subject_data':assign_subject_data,
-        'subject_data':subject_data
+        'subject_data':subject_data,
+        'semester_result':sem_result,
+        
+        'subject_in_sem':subject_in_sem
                       
     })
 
 # Subject Wise mark and attendance report
 
-def subject_wise_report(request, subject_id, batch_id, ):
+def tutor_subject_wise_report(request, subject_id, batch_id, ):
     print(subject_id)
     user_id = request.session['id']
     staff_details = profile.objects.get(Faculty_unique_id=user_id)
@@ -780,6 +790,78 @@ def update_student_profile(request, student_id):
                       'subject_data':subject_data,
                       'internal_mark_data': internal_mark_data
                     })
+
+
+#Selecting the sem, month and year for add sem result
+def add_result(request, batch_id):
+    user_id = request.session['id']
+    staff_details = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details.First_name + " " + staff_details.Last_name
+    context = {'name': fullname}
+
+
+    batch_id=int(batch_id)
+
+    if 'select_sem_and_year' in request.POST:
+        month_year = request.POST.get('month_and_year')
+        semester = request.POST.get('sem')
+        month_year = month_year.split('-')
+
+        print(month_year, type(month_year))
+        print(semester, type(semester))
+        month = int(month_year[1])
+        year = int(month_year[0])
+        print(month, year)
+        return redirect(add_sem_result, batch_id, int(month), year, semester)
+    return render(request, 'add_result.html', {
+        'context':context
+    })
+
+
+# Adding the sem result
+
+def add_sem_result(request, batch_id, month, year, semester):
+    user_id = request.session['id']
+    staff_details = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details.First_name + " " + staff_details.Last_name
+    context = {'name': fullname}
+
+    student_data = profile_student.objects.filter(batch=batch_id)
+    subject_in_sem = subject_to_staff.objects.filter(batch_id=batch_id, semester=semester)
+    all_subject = subject.objects.all()
+
+    if request.method == 'POST':
+        mark_list=[]
+        for j in student_data:
+            for i in subject_in_sem:
+                name_of_tag = str(j.university_no)+'-'+str(i.subject_id)
+                print(name_of_tag)
+                x = request.POST.getlist(name_of_tag)
+                print(x)
+                
+                mark_tuple = (j.university_no, i.subject_id, int(x[0]))
+                mark_list.append(mark_tuple)
+                #print(type(int(month)))
+                print(month)
+                month_int = month
+                year_int = year
+                semester_result.objects.create(university_no=j.university_no, subject_id=i.subject_id, grade_point=int(x[0]), semester=semester, month=month_int, year=year_int, batch_id=batch_id )
+                # print(x)
+        print(mark_list)
+
+        return redirect(update_class_of_tutor, batch_id=batch_id)
+    return render(request, 'add_sem_result.html',
+    {
+
+    'context':context,
+    'student_data':student_data,
+    'subject_in_sem':subject_in_sem,
+    'all_subject':all_subject
+
+    })
+
+
+
 
 # logout
 
