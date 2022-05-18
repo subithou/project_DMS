@@ -445,7 +445,12 @@ def edit_batch(request, b_id):
     student_data = profile_student.objects.filter(batch=b_id)
     staff_data = profile.objects.all()
     subject_data = subject.objects.all()
+
     assign_subject_data = subject_to_staff.objects.filter(batch_id=b_id)
+    sem_result = semester_result.objects.filter(batch_id=b_id)
+
+    subject_in_sem = subject_to_staff.objects.filter(batch_id=b_id)
+
 
     if request.method == 'POST':
         # class_name = request.POST.get('class_name')
@@ -503,7 +508,9 @@ def edit_batch(request, b_id):
                    'student_data': student_data,
                    'subject_data': subject_data,
                    'assign_subject_data': assign_subject_data,
-                   'staff_data':staff_data
+                   'staff_data':staff_data,
+                   'semester_result':sem_result,
+                'subject_in_sem':subject_in_sem
 
                    })
 
