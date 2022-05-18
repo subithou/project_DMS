@@ -4,7 +4,7 @@ from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.db.models import Sum
+from django.db.models import Sum, Max
 
 import login
 from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
@@ -944,9 +944,13 @@ def view_student_details(request, student_id):
             att_tuple = (i.subject_id, st_data.register_no,i.semester, percentage_attendance)
             attendance_list.append(att_tuple)
 
-
-        sem_result_data = semester_result.objects.filter(subject_id = i.subject_id)
+        max_chances = semester_result.objects.filter(subject_id = i.subject_id, university_no=st_data.university_no).aggregate(Max('no_of_chances')) 
+        
+        sem_result_data = semester_result.objects.filter(subject_id = i.subject_id,university_no=st_data.university_no, no_of_chances=max_chances['no_of_chances__max'])
+        
+        print(max_chances['no_of_chances__max'])
         for result in sem_result_data:
+            print(result)
             sem_result_tuple = (i.subject_id, st_data.register_no,i.semester, result.grade_point, result.no_of_chances)
             sem_result_list.append(sem_result_tuple)
     #print(attendance_list)    

@@ -111,6 +111,21 @@
                     <td class="count-me">
                       <div class="col-12">
                       <input type="number"  class="form-control" 
+                      
+                      
+                      {% for j in semester_result %}
+                        {% if j.subject_id == k.subject_id %}
+                        {% if j.university_no == i.university_no %}
+                          value={{j.grade_point}}
+                          
+                        {% endif %}  
+                        
+
+                        {% endif %}
+                      {% endfor %}
+                    
+                      
+
                       name="{{i.university_no}}-{{k.subject_id}}" min=0 max=10 oninput="validity.valid||(value='');" required>
                     </div>
                   

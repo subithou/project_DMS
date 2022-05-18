@@ -71,6 +71,7 @@ class semester_result(models.Model):
     batch_id = models.BigIntegerField(null=False)
     month = models.BigIntegerField(null=False)
     year = models.BigIntegerField(null=False)
+    no_of_chances = models.BigIntegerField(null=False)
 
 
 

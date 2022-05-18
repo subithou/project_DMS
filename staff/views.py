@@ -829,6 +829,7 @@ def add_sem_result(request, batch_id, month, year, semester):
     student_data = profile_student.objects.filter(batch=batch_id)
     subject_in_sem = subject_to_staff.objects.filter(batch_id=batch_id, semester=semester)
     all_subject = subject.objects.all()
+    sem_result = semester_result.objects.filter(semester=semester, batch_id=batch_id)
 
     if request.method == 'POST':
         mark_list=[]
@@ -845,7 +846,17 @@ def add_sem_result(request, batch_id, month, year, semester):
                 print(month)
                 month_int = month
                 year_int = year
-                semester_result.objects.create(university_no=j.university_no, subject_id=i.subject_id, grade_point=int(x[0]), semester=semester, month=month_int, year=year_int, batch_id=batch_id )
+                already_exist = semester_result.objects.filter(university_no=j.university_no,subject_id=i.subject_id, grade_point=int(x[0]) )
+                if already_exist:
+                    pass
+                else:
+                    chance_count = semester_result.objects.filter(university_no=j.university_no,subject_id=i.subject_id).count()
+                    if chance_count == 0:
+                        semester_result.objects.create(university_no=j.university_no, subject_id=i.subject_id, grade_point=int(x[0]), semester=semester, month=month_int, year=year_int, batch_id=batch_id, no_of_chances=1 )
+                    else:
+                        chance_count += 1
+                        semester_result.objects.create(university_no=j.university_no, subject_id=i.subject_id, grade_point=int(x[0]), semester=semester, month=month_int, year=year_int, batch_id=batch_id, no_of_chances=chance_count )
+
                 # print(x)
         print(mark_list)
 
@@ -856,7 +867,8 @@ def add_sem_result(request, batch_id, month, year, semester):
     'context':context,
     'student_data':student_data,
     'subject_in_sem':subject_in_sem,
-    'all_subject':all_subject
+    'all_subject':all_subject,
+    'semester_result':sem_result
 
     })
 

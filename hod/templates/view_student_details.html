@@ -859,7 +859,24 @@
 
                                     <td>{% for k in sem_result_list %}
                                       {% if k.0 == j.subject_id %}
-                                      {{k.3}}
+                                      
+                                      {% if k.3 == 10 %}
+                                            O
+                                          {% elif k.3 == 9 %}
+                                            A+
+                                          {% elif k.3 == 8.5 %}
+                                            A
+                                          {% elif k.3 == 8 %}
+                                            B+
+                                          {% elif k.3 == 7 %}
+                                            B
+                                          {% elif k.3 == 6 %}
+                                            C
+                                          {% elif k.3 == 5 %}
+                                            P
+                                          {% elif k.3 < 5 %}
+                                            F
+                                          {% endif %}
                                       {% endif %}
                                       {% endfor %}</td>
                                     <td>{% for k in sem_result_list %}
