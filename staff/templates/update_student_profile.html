@@ -735,7 +735,6 @@
                                   <strong>Grade card</strong> 
                                   <br>
                                   <div class="table-responsive">
-
                                     <table class="datatable" id="table">
                                       
                                         <thead>
@@ -839,7 +838,24 @@
   
                                       <td>{% for k in sem_result_list %}
                                         {% if k.0 == j.subject_id %}
-                                        {{k.3}}
+                                        
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
                                         {% endif %}
                                         {% endfor %}</td>
                                       <td>{% for k in sem_result_list %}
@@ -866,7 +882,7 @@
                                         
   
                                     </table>
-                                </div>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -878,87 +894,150 @@
                               </h2>
                               <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
                                   <div class="table-responsive">
                                     <table class="datatable" id="table">
                                       
-                                      <thead>
-                                        <th>#</th>
-                                        <th>Code</th>
-                                        <th>Subject</th>
-                                        <th>Assignment 1</th>
-                                        <th>Assignment 2</th>
-                                        <th>Series 1</th>
-                                        <th>Series 2</th>
-                                        <th>Attendance(%)</th>
-                                        <th>Total Mark</th>
-                                        <th>University Result</th>
-                                        <th>No.of CHANCES</th>
-                                        <th>Credit</th>
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 3 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
   
-                                      </thead>
-                                    
-                                     
-                                        <tbody>
-                                          {% for j in assign_subject_data %}
-                                  {% if  j.semester == 3 %}
-                                  <tr>
-                                    
-                                    
-                                    <td>{{ forloop.counter }}</td>
-                                    {% for i in subject_data %}
-                                    {% if j.subject_id == i.id %}
-                                    <td>{{i.code}}</td>
-                                    <td>{{i.subject_name}}</td>
-
-                                    {% for k in internal_mark_data %}
-                                    {% if k.semester == 3 %}
-                                    {% if k.subject_id == i.id %}
-
-                                    <td>{% if k.exam_type == 'Assignment 1' %}
-                                      {{k.mark}}
-                                      {% else %}
-                                        Not entered
-                                      {% endif %}</td>
-                                    <td>{% if k.exam_type == 'Assignment 2' %}
-                                      {{k.mark}}
-                                      {% else %}
-                                        Not entered
-                                      {% endif %}</td>
-                                    <td>{% if k.exam_type == 'Internal 1' %}
-                                      {{k.mark}}
-                                      {% else %}
-                                        Not entered
-                                      {% endif %}</td>
-                                    <td>{% if k.exam_type == 'Internal 2' %}
-                                      {{k.mark}}
-                                      {% else %}
-                                        Not entered
-                                      {% endif %}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 3 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 3 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Assignment 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 3 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
+                                        
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 3 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Internal 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 3 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
+                                        
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
                                     {% endif %}
-                                    
-                                    {% endif %}
-                                    
-                                    
-                                    {% endfor %}
-                                    
-                                    <td>{{i.credit}}</td>
-                                    {% endif %}
-                                    {% endfor %}
-                                    
-                                  </tr>
-                                  {% endif %}
-                              {% endfor %}
-                                           
-                                          
-                                          
-                                          
-                                        </tbody>
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
                                           
                                         
   
@@ -976,86 +1055,155 @@
                               </h2>
                               <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
-                                  <table class="datatable">
-                                    <thead>
-                                      <th>#</th>
-                                      <th>Code</th>
-                                      <th>Subject</th>
-                                      <th>Assignment 1</th>
-                                      <th>Assignment 2</th>
-                                      <th>Series 1</th>
-                                      <th>Series 2</th>
-                                      <th>Attendance(%)</th>
-                                      <th>Total Mark</th>
-                                      <th>University Result</th>
-                                      <th>No.of CHANCES</th>
-                                      <th>Credit</th>
-
-                                    </thead>
-                                  
-                                   
-                                      <tbody>
-                                        {% for j in assign_subject_data %}
-                                {% if  j.semester == 4 %}
-                                <tr>
-                                  
-                                  
-                                  <td>{{ forloop.counter }}</td>
-                                  {% for i in subject_data %}
-                                  {% if j.subject_id == i.id %}
-                                  <td>{{i.code}}</td>
-                                  <td>{{i.subject_name}}</td>
-
-                                  {% for k in internal_mark_data %}
-                                  {% if k.semester == 4 %}
-                                  {% if k.subject_id == i.id %}
-
-                                  <td>{% if k.exam_type == 'Assignment 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Assignment 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  
-                                  {% endif %}
-                                  
-                                  {% endif %}
-                                  
-                                  
-                                  {% endfor %}
-                                  
-                                  <td>{{i.credit}}</td>
-                                  {% endif %}
-                                  {% endfor %}
-                                  
-                                </tr>
-                                {% endif %}
-                            {% endfor %}
-                                         
+                                  <div class="table-responsive">
+                                    <table class="datatable" id="table">
+                                      
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 4 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
+  
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 4 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 4 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Assignment 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 4 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
                                         
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 4 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Internal 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 4 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
                                         
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
                                         
-                                      </tbody>
-                                  </table>
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
+                                          
+                                        
+  
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1068,87 +1216,155 @@
                               </h2>
                               <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
-                                  <table class="datatable">
-                                    <thead>
-                                      <th>#</th>
-                                      <th>Code</th>
-                                      <th>Subject</th>
-                                      <th>Assignment 1</th>
-                                      <th>Assignment 2</th>
-                                      <th>Series 1</th>
-                                      <th>Series 2</th>
-                                      <th>Attendance(%)</th>
-                                      <th>Total Mark</th>
-                                      <th>University Result</th>
-                                      <th>No.of CHANCES</th>
-                                      <th>Credit</th>
-
-                                    </thead>
-                                  
-                                   
-                                      <tbody>
-                                        {% for j in assign_subject_data %}
-                                {% if  j.semester == 5 %}
-                                <tr>
-                                  
-                                  
-                                  <td>{{ forloop.counter }}</td>
-                                  {% for i in subject_data %}
-                                  {% if j.subject_id == i.id %}
-                                  <td>{{i.code}}</td>
-                                  <td>{{i.subject_name}}</td>
-
-                                  {% for k in internal_mark_data %}
-                                  {% if k.semester == 5 %}
-                                  {% if k.subject_id == i.id %}
-
-                                  <td>{% if k.exam_type == 'Assignment 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Assignment 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  
-                                  {% endif %}
-                                  
-                                  {% endif %}
-                                  
-                                  
-                                  {% endfor %}
-                                  
-                                  <td>{{i.credit}}</td>
-                                  {% endif %}
-                                  {% endfor %}
-                                  
-                                </tr>
-                                {% endif %}
-                            {% endfor %}
-                                         
+                                  <div class="table-responsive">
+                                    <table class="datatable" id="table">
+                                      
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 5 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
+  
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 5 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 5 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Assignment 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 5 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
                                         
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 5 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Internal 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 5 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
                                         
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
                                         
-                                      </tbody>
-
-                                  </table>
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
+                                          
+                                        
+  
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1161,87 +1377,155 @@
                               </h2>
                               <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
-                                  <table class="datatable" >
-                                    <thead>
-                                      <th>#</th>
-                                      <th>Code</th>
-                                      <th>Subject</th>
-                                      <th>Assignment 1</th>
-                                      <th>Assignment 2</th>
-                                      <th>Series 1</th>
-                                      <th>Series 2</th>
-                                      <th>Attendance(%)</th>
-                                      <th>Total Mark</th>
-                                      <th>University Result</th>
-                                      <th>No.of CHANCES</th>
-                                      <th>Credit</th>
-
-                                    </thead>
-                                  
-                                   
-                                      <tbody>
-                                        {% for j in assign_subject_data %}
-                                {% if  j.semester == 6 %}
-                                <tr>
-                                  
-                                  
-                                  <td>{{ forloop.counter }}</td>
-                                  {% for i in subject_data %}
-                                  {% if j.subject_id == i.id %}
-                                  <td>{{i.code}}</td>
-                                  <td>{{i.subject_name}}</td>
-
-                                  {% for k in internal_mark_data %}
-                                  {% if k.semester == 6 %}
-                                  {% if k.subject_id == i.id %}
-
-                                  <td>{% if k.exam_type == 'Assignment 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Assignment 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  
-                                  {% endif %}
-                                  
-                                  {% endif %}
-                                  
-                                  
-                                  {% endfor %}
-                                  
-                                  <td>{{i.credit}}</td>
-                                  {% endif %}
-                                  {% endfor %}
-                                  
-                                </tr>
-                                {% endif %}
-                            {% endfor %}
-                                         
+                                  <div class="table-responsive">
+                                    <table class="datatable" id="table">
+                                      
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 6 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
+  
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 6 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 6 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Assignment 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 6 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
                                         
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 6 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Internal 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 6 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
                                         
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
                                         
-                                      </tbody>
-
-                                  </table>
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
+                                          
+                                        
+  
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1254,109 +1538,155 @@
                               </h2>
                               <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
-                                  <table class="datatable" >
-                                    <thead>
-                                      <th>#</th>
-                                      <th>Code</th>
-                                      <th>Subject</th>
-                                      <th>Assignment 1</th>
-                                      <th>Assignment 2</th>
-                                      <th>Series 1</th>
-                                      <th>Series 2</th>
-                                      <th>Attendance(%)</th>
-                                      <th>Total Mark</th>
-                                      <th>University Result</th>
-                                      <th>No.of CHANCES</th>
-                                      <th>Credit</th>
-
-                                    </thead>
-                                  
-                                   
-                                      <tbody>
-                                        {% for j in assign_subject_data %}
-                                {% if  j.semester == 7 %}
-                                <tr>
-                                  
-                                  
-                                  <td>{{ forloop.counter }}</td>
-                                  {% for i in subject_data %}
-                                  {% if j.subject_id == i.id %}
-                                  <td>{{i.code}}</td>
-                                  <td>{{i.subject_name}}</td>
-
-                                 
-                                  <td>
-                                    {% for k in internal_mark_data %}
-                                  {% if k.semester == 7 %}
-                                  {% if k.subject_id == i.id %}
-                                    {% if k.exam_type == 'Assignment 1' %}
-                                    {{k.mark}}
-                                    
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endfor %}
-                                  
-                                  </td>
-                                  <td>
-                                    {% for k in internal_mark_data %}
-                                    {% if k.semester == 7 %}
-                                    {% if k.subject_id == i.id %}
+                                  <div class="table-responsive">
+                                    <table class="datatable" id="table">
+                                      
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 7 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
+  
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 7 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 7 %}
+                                      {% if k.subject_id == i.id %}
+  
                                       {% if k.exam_type == 'Assignment 2' %}
-                                      {{k.mark}}
-                                      
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 7 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
                                         
-                                      {% endif %}
-                                      {% endif %}
-                                      {% endif %}
-                                      {% endfor %}</td>
-
-
-
-
-
-                                  <td>{% for k in internal_mark_data %}
-                                    {% if k.semester == 7 %}
-                                    {% if k.subject_id == i.id %}
-                                      {% if k.exam_type == 'Internal 1' %}
-                                      {{k.mark}}
-                                     
-                                      {% endif %}
-                                      {% endif %}
-                                      {% endif %}
-                                      {% endfor %}</td>
-                                  <td>{% for k in internal_mark_data %}
-                                    {% if k.semester == 7 %}
-                                    {% if k.subject_id == i.id %}
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 7 %}
+                                      {% if k.subject_id == i.id %}
+  
                                       {% if k.exam_type == 'Internal 2' %}
-                                      {{k.mark}}
-                                      
-                                      {% endif %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
                                       {% endif %}
                                       {% endif %}
                                       {% endfor %}</td>
-                                  <td>None</td>
-                                  <td>None</td>
-                                  <td>None</td>
-                                  <td>None</td>
-                                  
-                                 
-                                  
-                                  <td>{{i.credit}}</td>
-                                  {% endif %}
-                                  {% endfor %}
-                                  
-                                </tr>
-                                {% endif %}
-                            {% endfor %}
-                                         
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 7 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
                                         
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
                                         
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
+                                          
                                         
-                                      </tbody>
-
-                                  </table>
+  
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1370,88 +1700,155 @@
                               </h2>
                               <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                  <strong>Grade card</strong> 
-                                  <table class="datatable" >
-                                    <thead>
-                                      <th>#</th>
-                                      <th>Code</th>
-                                      <th>Subject</th>
-                                      <th>Assignment 1</th>
-                                      <th>Assignment 2</th>
-                                      <th>Series 1</th>
-                                      <th>Series 2</th>
-                                      <th>Attendance(%)</th>
-                                      <th>Total Mark</th>
-                                      <th>University Result</th>
-                                      <th>No.of CHANCES</th>
-                                      <th>Credit</th>
-
-                                    </thead>
-                                  
-                                   
-                                      <tbody>
-                                        {% for j in assign_subject_data %}
-                                {% if  j.semester == 8 %}
-                                <tr>
-                                  
-                                  
-                                  <td>{{ forloop.counter }}</td>
-                                  {% for i in subject_data %}
-                                  {% if j.subject_id == i.id %}
-                                  <td>{{i.code}}</td>
-                                  <td>{{i.subject_name}}</td>
-
-                                  {% for k in internal_mark_data %}
-                                  {% if k.semester == 8 %}
-                                  {% if k.subject_id == i.id %}
-
-                                  <td>
-                                    {% if k.exam_type == 'Assignment 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Assignment 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 1' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td>{% if k.exam_type == 'Internal 2' %}
-                                    {{k.mark}}
-                                    {% else %}
-                                      Not entered
-                                    {% endif %}</td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  <td></td>
-                                  
-                                  {% endif %}
-                                  
-                                  {% endif %}
-                                  
-                                  
-                                  {% endfor %}
-                                  
-                                  <td>{{i.credit}}</td>
-                                  {% endif %}
-                                  {% endfor %}
-                                  
-                                </tr>
-                                {% endif %}
-                            {% endfor %}
-                                         
+                                  <div class="table-responsive">
+                                    <table class="datatable" id="table">
+                                      
+                                        <thead>
+                                          <th>#</th>
+                                          <th>Code</th>
+                                          <th>Subject</th>
+                                          <th>Assignment 1</th>
+                                          <th>Assignment 2</th>
+                                          <th>Series 1</th>
+                                          <th>Series 2</th>
+                                          <th>Attendance(%)</th>
+                                          <th>Total Mark</th>
+                                          <th>University Result</th>
+                                          <th>No.of Chances</th>
+                                          <th>Credit</th>
+    
+                                        </thead>
+                                      
+                                       
+                                          <tbody>
+                                            {% for j in assign_subject_data %}
+                                    {% if  j.semester == 8 %}
+                                    <tr>
+                                      
+                                      
+                                      <td>{{ forloop.counter }}</td>
+                                      {% for i in subject_data %}
+                                      {% if j.subject_id == i.id %}
+  
+                                      <td>{{i.code}}</td>
+                                      <td>{{i.subject_name}}</td>
+  
+                                      
+  
+                                      <td>
+                                        {% for k in internal_mark_data %}
+                                      {% if k.semester == 8 %}
+                                      {% if k.subject_id == i.id %}
+                                        {% if k.exam_type == 'Assignment 1' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      
+  
+                                      <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 8 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Assignment 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+  
+                                      <td>{% for k in internal_mark_data %}
+                                        {% if k.semester == 8 %}
+                                        {% if k.subject_id == i.id %}
+    
+                                        {% if k.exam_type == 'Internal 1' %}
+                                            {{k.mark}}
                                         
+                                          {% endif %}
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+  
+                                     <td>{% for k in internal_mark_data %}
+                                      {% if k.semester == 8 %}
+                                      {% if k.subject_id == i.id %}
+  
+                                      {% if k.exam_type == 'Internal 2' %}
+                                          {{k.mark}}
+                                       
+                                        {% endif %}
+                                      {% endif %}
+                                      {% endif %}
+                                      {% endfor %}</td>
+                                      <td>
+                                        {% for att in attendance_list %}
+                                        {% if att.2 == 8 %}
+                                        {% if att.0 == i.id %}
+                                          {{att.3}} %
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                      </td>
+                                      <td>
+                                      {% for w in total_mark_list %}
+                                        {% if j.subject_id == w.0 %}
+                                          {{w.3}}
                                         
+                                        {% endif %}
+                                      {% endfor %}
+                                      </td>
+  
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
                                         
-                                      </tbody>
-
-                                  </table>
+                                        {% if k.3 == 10 %}
+                                              O
+                                            {% elif k.3 == 9 %}
+                                              A+
+                                            {% elif k.3 == 8.5 %}
+                                              A
+                                            {% elif k.3 == 8 %}
+                                              B+
+                                            {% elif k.3 == 7 %}
+                                              B
+                                            {% elif k.3 == 6 %}
+                                              C
+                                            {% elif k.3 == 5 %}
+                                              P
+                                            {% elif k.3 < 5 %}
+                                              F
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      <td>{% for k in sem_result_list %}
+                                        {% if k.0 == j.subject_id %}
+                                        {{k.4}}
+                                        {% endif %}
+                                        {% endfor %}</td>
+                                      
+                                      
+                                      
+                                      <td>{{i.credit}}</td>
+                                      {% endif %}
+                                      {% endfor %}
+                                      
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                             
+                                            
+                                            
+                                            
+                                          </tbody>
+                                          
+                                        
+  
+                                    </table>
+                                  </div>
                                 </div>
                               </div>
                             </div>
