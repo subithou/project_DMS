@@ -10,7 +10,7 @@
       <jdbc-url>jdbc:postgresql://127.0.0.1:5432/project_DMS</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="PostgreSQL - project_DMS@localhost" uuid="34a55376-09e6-4d95-90cf-df5ac1e7a237">
+    <data-source source="LOCAL" name="postgres@localhost" uuid="c5d98df2-8b57-4beb-afdc-66b1252081c9">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

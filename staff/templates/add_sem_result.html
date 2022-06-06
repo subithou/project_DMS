@@ -110,23 +110,146 @@
                     {% for k in subject_in_sem %}
                     <td class="count-me">
                       <div class="col-12">
-                      <input type="number"  class="form-control" 
                       
                       
-                      {% for j in semester_result %}
-                        {% if j.subject_id == k.subject_id %}
-                        {% if j.university_no == i.university_no %}
-                          value={{j.grade_point}}
-                          
-                        {% endif %}  
-                        
-
-                        {% endif %}
-                      {% endfor %}
                     
                       
+                      
+                      
+                      <select class="form-select"  name="{{i.university_no}}-{{k.subject_id}}" required>
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" >C</option>
+                          <option value="5" >P</option>
+                          <option value="0" >F</option>
+                          <option value="-1">Absent</option>
+                        {% for j in semester_result %}
+                        {% if j.subject_id == k.subject_id %}
+                        {% if j.university_no == i.university_no %}
 
-                      name="{{i.university_no}}-{{k.subject_id}}" min=0 max=10 oninput="validity.valid||(value='');" required>
+                        {% if j.grade_point == 10 %}
+                          <option value="10" selected>O</option>
+                          <option value="9">A+</option>
+                          <option value="8.5">A</option>
+                          <option value="8">B+</option>
+                          <option value="7">B</option>
+                          <option value="6">C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        {% elif j.grade_point == 9 %}
+                          <option value="10" >O</option>
+                          <option value="9" selected>A+</option>
+                          <option value="8.5">A</option>
+                          <option value="8">B+</option>
+                          <option value="7">B</option>
+                          <option value="6">C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        {% elif j.grade_point == 8.5 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" selected>A</option>
+                          <option value="8">B+</option>
+                          <option value="7">B</option>
+                          <option value="6">C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% elif j.grade_point == 8 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" selected>B+</option>
+                          <option value="7">B</option>
+                          <option value="6">C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% elif j.grade_point == 7 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" selected>B</option>
+                          <option value="6">C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% elif j.grade_point == 6 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" selected>C</option>
+                          <option value="5">P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+
+                        {% elif j.grade_point == 5 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" >C</option>
+                          <option value="5" selected>P</option>
+                          <option value="0">F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% elif j.grade_point == 0 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" >C</option>
+                          <option value="5" >P</option>
+                          <option value="0" selected>F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% elif j.grade_point == -1 %}
+                          <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" >C</option>
+                          <option value="5" >P</option>
+                          <option value="0" >F</option>
+                          <option value="-1" selected>Absent</option>
+                        {% else  %}
+                         <option value="10" >O</option>
+                          <option value="9" >A+</option>
+                          <option value="8.5" >A</option>
+                          <option value="8" >B+</option>
+                          <option value="7" >B</option>
+                          <option value="6" >C</option>
+                          <option value="5" >P</option>
+                          <option value="0" >F</option>
+                          <option value="-1">Absent</option>
+                        
+                        {% endif %}
+                        
+                          
+                          
+                        {% endif %}                          
+                        {% endif %}
+                      {% endfor %}
+                      
+                     
+                      
+                    
+                    </select>
+
                     </div>
                   
                   </td>

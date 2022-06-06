@@ -1,5 +1,6 @@
 from ast import For
 import code
+from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -8,22 +9,27 @@ from django.db.models import Sum, Max
 
 import login
 from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
-from login.models import User
+from login.models import MyUser
 from staff.models import profile
 from student.models import profile_student
 from hod.models import batch
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
 import hod
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 # print(make_password('123'))
 # print(check_password('1', '1'))
 
-
+@login_required
 def hod_index(request):
-    status = 0
+    current_user = request.user
+    print (current_user.id)
+    #print( request.session['user'])
+    return redirect(view_faculty)
+
+    '''status = 0
     try:
         status_new = request.session['status']
     except:
@@ -49,15 +55,16 @@ def hod_index(request):
         #               "data_for_self_profile": staff_details_1})
         return redirect(view_faculty)
     else:
-        return redirect(login.views.login)
+        return redirect(login.views.login_page)'''
 
 
 # staff code
-
+@login_required
 def add_staff(request):
     # name = request.session['name']
-
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id=current_user.username
+    #staff_id = request.session['hod_username']
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -74,20 +81,22 @@ def add_staff(request):
         if password1 != password2:
             messages.error(request, 'Password mismatch')
         else:
-            user = User.objects.filter(username=username)
+            user = MyUser.objects.filter(username=username)
             if user:
                 messages.error(request, 'User already exist')
             else:
                 # enc_pswrd = make_password(password1)
-                User.objects.create(username=username,
+                #user = super().save(commit=False)
+                password= make_password(password1)
+                MyUser.objects.create(username=username,
                                     first_name=first_name,
                                     last_name=last_name,
-                                    password=password1,
-                                    is_staff=True,
+                                    password=password,
+                                    is_faculty=True,
                                     is_active=True,
                                     is_student=False,
-                                    is_hod=False,
-                                    is_superuser=False
+                                    is_hod=False
+                                    
 
                                     )
 
@@ -97,10 +106,12 @@ def add_staff(request):
 
     return render(request, 'add_staff.html', {"context": context, "data_for_self_profile": staff_details_1})
 
-
+@login_required
 def view_faculty(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    #print(staff)
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -113,7 +124,7 @@ def view_faculty(request):
                    'batch_data': batch_data
                    })
 
-
+@login_required
 def delete_faculty(request, f_id):
     # check the faculty for delete is hod or not
     login_data = User.objects.get(username=f_id)
@@ -132,7 +143,10 @@ def delete_faculty(request, f_id):
 
 def faculty_profile(request, f_id):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -230,7 +244,10 @@ def check_user_exist(request):
 
 def add_student(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -264,21 +281,21 @@ def add_student(request):
                 messages.error(request, 'Password mismatch')
             else:
 
-                user = User.objects.filter(username=username)
+                user = MyUser.objects.filter(username=username)
                 if user:
                     messages.error(request, 'User already exist')
                 else:
                     # insert only the year in student profile (column : year_of_join)
-
-                    User.objects.create(username=username,
+                    password= make_password(password1)
+                    MyUser.objects.create(username=username,
                                         first_name=first_name,
                                         last_name=last_name,
-                                        password=password1,
-                                        is_staff=False,
+                                        password=password,
+                                        is_faculty=False,
                                         is_active=True,
                                         is_student=True,
-                                        is_hod=False,
-                                        is_superuser=False
+                                        is_hod=False
+                                        
                                         )
 
                     profile_student.objects.create(
@@ -303,7 +320,9 @@ def add_student(request):
 
 def view_student(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -373,7 +392,11 @@ def view_student(request):
 
 def create_batch(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
+
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -416,7 +439,10 @@ def create_batch(request):
 
 def view_batch(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -430,7 +456,10 @@ def view_batch(request):
 
 def edit_batch(request, b_id):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -543,7 +572,10 @@ def delete_batch(request, b_id):
 
 def create_scheme(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    
+
+    staff_id = current_user.username
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -566,7 +598,9 @@ def create_scheme(request):
 
 def view_scheme(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -581,7 +615,9 @@ def view_scheme(request):
 
 def create_subject(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -630,7 +666,9 @@ def check_subject_exist(request):
 
 def view_subject(request):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -684,7 +722,9 @@ def view_subject(request):
 
 def edit_subject(request, subject_id):
     # name = request.session['name']
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -730,7 +770,9 @@ def edit_subject(request, subject_id):
 
 
 def assign_subject_to_staff(request):
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -794,7 +836,9 @@ def delete_subject(request, subject_id):
 # manage all batch data 
 
 def batch_details(request, b_id):
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -804,7 +848,9 @@ def batch_details(request, b_id):
 # manage tutors
 
 def view_tutor(request):
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -814,7 +860,10 @@ def view_tutor(request):
 
 def subject_wise_report(request, subject_id, batch_id):
     print(subject_id)
-    user_id = request.session['id']
+    current_user = request.user
+    staff_id = current_user.username
+    user_id = staff_id
+
     staff_details = profile.objects.get(Faculty_unique_id=user_id)
     fullname = staff_details.First_name + " " + staff_details.Last_name
     context = {'name': fullname}
@@ -887,7 +936,9 @@ def subject_wise_report(request, subject_id, batch_id):
     })
 
 def view_student_details(request, student_id):
-    staff_id = request.session['hod_username']
+    current_user = request.user
+    staff_id = current_user.username
+    
     staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
@@ -995,7 +1046,7 @@ def view_student_details(request, student_id):
             
             student_data1 = profile_student.objects.get(id=id)
             username = student_data1.register_no
-            user_data = User.objects.get(username=username)
+            user_data = MyUser.objects.get(username=username)
 
             user_data.first_name = f_name
             user_data.last_name = l_name
@@ -1064,4 +1115,4 @@ def view_student_details(request, student_id):
 def log_out(request):
     logout(request)
 
-    return redirect(login.views.login)
+    return HttpResponseRedirect('/login/')

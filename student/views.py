@@ -1,16 +1,21 @@
+from atexit import register
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
 from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
 from student.models import profile_student
-from login.models import User
+from login.models import MyUser
 import login
 
 from django.db.models import Sum, Max
 
 # Create your views here.
 def student_index(request):
-    name = request.session['student_name']
+    current_user = request.user
+    user_id = current_user.username
+
+    student_details_1 = profile_student.objects.get(register_no=user_id)
+    name = student_details_1.first_name + " " + student_details_1.last_name
     # id = request.session['student_id']
     context = {'name': name}
 
@@ -19,7 +24,13 @@ def student_index(request):
 
 def student_profile(request):
     # name = request.session['student_name']
-    id = request.session['student_id']
+    current_user = request.user
+    user_id = current_user.username
+
+    student_details_1 = profile_student.objects.get(register_no=user_id)
+    name = student_details_1.first_name + " " + student_details_1.last_name
+
+    id = user_id
     student_data = profile_student.objects.filter(register_no=id)
 
     for i in student_data:
@@ -118,7 +129,7 @@ def student_profile(request):
         else:
 
             student_data1 = profile_student.objects.get(register_no=id)
-            user_data = User.objects.get(username=id)
+            user_data = MyUser.objects.get(username=id)
 
             user_data.first_name = f_name
             user_data.last_name = l_name
@@ -152,7 +163,7 @@ def student_profile(request):
         new_password = request.POST.get('new_password')
         renew_password = request.POST.get('renew_password')
 
-        user_data = User.objects.get(username=id)
+        user_data = MyUser.objects.get(username=id)
         user_password = user_data.password
 
         if new_password != renew_password:

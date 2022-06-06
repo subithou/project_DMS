@@ -46,6 +46,7 @@ class subject_to_staff(models.Model):
         name = self.subject_id
         return name
 
+
 class Internal_mark(models.Model):
     student_id = models.BigIntegerField(null=False)
     subject_id = models.BigIntegerField(null=False)
@@ -55,27 +56,23 @@ class Internal_mark(models.Model):
         ('Assignment 2', 'Assignment 2'),
         ('Internal 1', 'Internal 1'),
         ('Internal 2', 'Internal 2'),
-        
+
     ]
     exam_type = models.CharField(max_length=255, choices=exm_type, null=False)
     semester = models.BigIntegerField(null=False)
     mark = models.FloatField(null=False)
-    
 
 
 class semester_result(models.Model):
     university_no = models.CharField(max_length=255, null=False, unique=False)
     subject_id = models.BigIntegerField(null=False)
-    grade_point = models.BigIntegerField(null=False)
+    grade_point = models.FloatField(null=False)
     semester = models.BigIntegerField(null=False)
     batch_id = models.BigIntegerField(null=False)
     month = models.BigIntegerField(null=False)
     year = models.BigIntegerField(null=False)
     no_of_chances = models.BigIntegerField(null=False)
 
-
-
-    
 
 class attendance_record(models.Model):
     date = models.DateField(null=True)
@@ -93,4 +90,4 @@ class attendance(models.Model):
     subject_id = models.BigIntegerField(unique=False, null=False)
     batch_id = models.BigIntegerField(unique=False, null=False)
     present = models.BooleanField(null=False)
-    semester = models.BigIntegerField( null=False)
+    semester = models.BigIntegerField(null=False)
