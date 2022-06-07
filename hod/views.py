@@ -235,7 +235,7 @@ def faculty_profile(request, f_id):
 @csrf_exempt
 def check_user_exist(request):
     username = request.POST.get('username')
-    subject_exist = User.objects.filter(username=username).exists()
+    subject_exist = MyUser.objects.filter(username=username).exists()
     if subject_exist:
         return HttpResponse(True)
     else:

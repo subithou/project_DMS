@@ -1,4 +1,5 @@
 from calendar import month
+from cgitb import text
 from datetime import date, datetime
 from email import message
 from functools import total_ordering
@@ -8,6 +9,7 @@ from django.forms import Form
 from django.db.models import Sum, Max
 
 from psycopg2 import Date
+from pyparsing import line
 from pytest import mark
 import urllib3
 import login
@@ -896,30 +898,7 @@ def add_result(request, batch_id):
 
 
 # Adding the sem result
-import io
-from django.http import FileResponse
-import reportlab
-from reportlab.pdfgen import canvas
-
-def view_pdf(request):
-    buffer = io.BytesIO()
-
-    # Create the PDF object, using the buffer as its "file."
-    p = canvas.Canvas(buffer)
-
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "Hello world.")
-
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
-
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
-    buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename='hello.pdf')
-
+  
 def add_sem_result(request, batch_id, month, year, semester):
     current_user = request.user
     user_id = current_user.username
@@ -973,20 +952,86 @@ def add_sem_result(request, batch_id, month, year, semester):
                 # print(x)
         print(mark_list)
         
-        return redirect(view_pdf)
+        return redirect(report, batch_id, semester)
         #return redirect(update_class_of_tutor, batch_id=batch_id)
     return render(request, 'add_sem_result.html',
                   {
-
                       'context': context,
                       'student_data': student_data,
                       'subject_in_sem': subject_in_sem,
                       'all_subject': all_subject,
                       'semester_result': sem_result,
                       'batch_scheme':batch_scheme
-
                   })
 
+
+# Generate report
+
+def report(request, batch_id, semester):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details.First_name + " " + staff_details.Last_name
+    context = {'name': fullname}
+
+    batch_data = batch.objects.filter(id=batch_id)
+    student_data = profile_student.objects.filter(batch=batch_id)
+    result_data = semester_result.objects.filter(batch_id=batch_id, semester=semester)
+    subject_data = subject.objects.all()
+    subject_in_sem_id = subject_to_staff.objects.filter(semester=semester)
+    
+    previous_sem = range(1,semester)
+    print(previous_sem)
+
+    mark_report = []
+    
+    
+    total_credit = 0
+    for j in subject_in_sem_id:
+        for subj in subject_data:
+            if subj.id == j.subject_id:
+                total_credit += subj.credit
+    
+    print('credit', total_credit)
+    for i in student_data:
+        arrears_in_current_sem = 0
+        absent = 0
+        sgpa = 0
+        for j in subject_in_sem_id:
+            for subj in subject_data:
+                if subj.id == j.subject_id:
+                    for result in result_data:
+                        if i.university_no == result.university_no:
+                            if result.subject_id == subj.id:
+                                if result.no_of_chances == 1:
+                                    if result.grade_point == 0:
+                                        arrears_in_current_sem +=1
+                                    if result.grade_point == -1:
+                                        absent += 1
+                                    gpi = result.grade_point
+                                    if result.grade_point == -1:
+                                        gpi = 0
+                                    sgpa = sgpa + (subj.credit * gpi)
+        print(i.first_name, sgpa)
+        tuple_data = (i.university_no, arrears_in_current_sem, absent, round(sgpa/total_credit, 2))
+        mark_report.append(tuple_data)
+    
+    print(mark_report)
+
+
+    return render(request, 'report.html',
+    {
+        'context':context,
+        'student_data':student_data,
+        'result_data':result_data,
+        'subject_data':subject_data,
+        'batch_data':batch_data,
+        'semester':semester,
+        'subject_in_sem_id':subject_in_sem_id,
+        'previous_sem':previous_sem,
+        'mark_report':mark_report
+    })
 
 # logout
 

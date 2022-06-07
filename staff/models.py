@@ -10,7 +10,7 @@ class profile(models.Model):
     Last_name = models.CharField(max_length=255, null=True)
     Gender = models.CharField(max_length=255, null=True, choices=[('Female', 'Female'), ('Male', 'Male'), ('Others', 'Others')])
     Date_of_Birth = models.DateField(null=True)
-    Aadhar_No = models.PositiveIntegerField(null=True)
+    Aadhar_No = models.BigIntegerField(null=True)
     Caste = models.CharField(max_length=255, null=True)
     Religion = models.CharField(max_length=255, null=True)
     category = models.CharField(max_length=255, null=True)
