@@ -23,9 +23,12 @@ def home(request):
                  'data2': data2,
                  'data3': data3
                  }
+        request.session['notif'] = notif
         return render(request, 'index.html', {'notif': notif})
 
     except:
 
         notif = {'data1': "KTU site cannot reach"}
+        request.session['notif'] = notif
         return render(request, 'index.html', {'notif': notif})
+    

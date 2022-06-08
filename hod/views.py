@@ -12,12 +12,13 @@ import login
 from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
 from login.models import MyUser
 from staff.models import profile
-from student.models import profile_student
+from student.models import parents, profile_student, qualifications
 from hod.models import batch
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
 import hod
 from django.contrib.auth.decorators import login_required
+from autoscraper import AutoScraper
 
 # Create your views here.
 # print(make_password('123'))
@@ -36,6 +37,8 @@ def hod_index(request):
     name = staff_details_1.First_name + " " + staff_details_1.Last_name
     context = {'name': name}
 
+    notif = request.session['notif']
+
     student_count = profile_student.objects.all().count()
     staff_count = profile.objects.all().count()
     batch_count = batch.objects.all().count()
@@ -45,7 +48,8 @@ def hod_index(request):
         'data_for_self_profile': staff_details_1,
         "staff_count": staff_count, 
         "student_count": student_count,
-        'batch_count':batch_count
+        'batch_count':batch_count,
+        'notif': notif
     })
 
     '''status = 0
@@ -324,6 +328,9 @@ def add_student(request):
                         batch=batch_id_int,
                         scheme_id=batch_data.scheme
                     )
+                    s_id = MyUser.objects.latest('id')
+                    qualifications.objects.create(s_id=s_id.id )
+                    parents.objects.create(s_id=s_id.id )
 
                     messages.error(request, 'Student ' + full_name + ' successfully added in ' + batch_data.class_name)
 
@@ -966,6 +973,9 @@ def view_student_details(request, student_id):
     id = int(student_id)
     student_data = profile_student.objects.filter(id=id)
 
+    student_q_details = qualifications.objects.filter(s_id=id)
+    parent_details = parents.objects.filter(s_id=id)
+
     for i in student_data:
         batch_id = i.batch
         date_of_birth = i.date_of_birth
@@ -1099,7 +1109,7 @@ def view_student_details(request, student_id):
         renew_password = request.POST.get('renew_password')
         student_data1 = profile_student.objects.get(id=id)
 
-        user_data = User.objects.get(username=student_data1.register_no)
+        user_data = MyUser.objects.get(username=student_data1.register_no)
         user_password = user_data.password
 
         if new_password != renew_password:
@@ -1126,7 +1136,9 @@ def view_student_details(request, student_id):
                       "data_for_self_profile": staff_details_1,
                       'total_mark_list':total_mark_list,
                       'attendance_list' : attendance_list,
-                      'sem_result_list': sem_result_list
+                      'sem_result_list': sem_result_list,
+                      'student_q_details':student_q_details,
+                      'parent_details':parent_details
                     })
 
 

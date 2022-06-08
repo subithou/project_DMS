@@ -1,3 +1,4 @@
+import email
 from django.db import models
 
 
@@ -40,6 +41,30 @@ class profile_student(models.Model):
 
     
     
+
     def __str__(self):
         name = self.first_name +" "+ self.last_name
         return name
+
+class qualifications(models.Model):
+    s_id = models.BigIntegerField(null=False)
+    name_of_exam = models.CharField(max_length=256, null=True)
+    name_of_institution = models.CharField(max_length=256, null=True)
+    month = models.BigIntegerField(null=True)
+    year = models.BigIntegerField(null=True)
+    mark = models.DecimalField(null=True,max_digits=10, decimal_places=2)
+    no_of_chances = models.BigIntegerField(null=True)
+
+class parents(models.Model):
+    s_id = models.BigIntegerField(null=False)
+    fathers_name = models.CharField(max_length=256,null=True)
+    fathers_occupation = models.CharField(max_length=256,null=True)
+    mothers_name = models.CharField(max_length=256,null=True)
+    mothers_occupation = models.CharField(max_length=256,null=True)
+    address = models.CharField(max_length=256,null=True)
+    res_address = models.CharField(max_length=256,null=True)
+    official_address = models.CharField(max_length=256,null=True)
+    fathers_email_id = models.EmailField(null=True)
+    mothers_email_id = models.EmailField(null=True)
+    fathers_number = models.BigIntegerField(null=True)
+    mothers_number = models.BigIntegerField(null=True)
