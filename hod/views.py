@@ -1,5 +1,6 @@
 from ast import For
 import code
+from itertools import count
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
@@ -27,7 +28,25 @@ def hod_index(request):
     current_user = request.user
     print (current_user.id)
     #print( request.session['user'])
-    return redirect(view_faculty)
+    #return redirect(view_faculty)
+    current_user = request.user
+    staff_id=current_user.username
+    #staff_id = request.session['hod_username']
+    staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
+    name = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': name}
+
+    student_count = profile_student.objects.all().count()
+    staff_count = profile.objects.all().count()
+    batch_count = batch.objects.all().count()
+    return render(request, 'hod_index.html',
+    {
+        'context':context,
+        'data_for_self_profile': staff_details_1,
+        "staff_count": staff_count, 
+        "student_count": student_count,
+        'batch_count':batch_count
+    })
 
     '''status = 0
     try:
@@ -135,7 +154,7 @@ def delete_faculty(request, f_id):
         return redirect(view_faculty)
     else:
         f_data.delete()
-        login_delete = User.objects.get(username=f_id)
+        login_delete = MyUser.objects.get(username=f_id)
         login_delete.delete()
         messages.error(request, 'Successfully deleted the faculty ' + f_data.First_name + f_data.Last_name)
         return redirect(view_faculty)
@@ -218,7 +237,7 @@ def faculty_profile(request, f_id):
         new_password = request.POST.get('new_password')
         renew_password = request.POST.get('renew_password')
 
-        user_data = User.objects.get(username=f_id)
+        user_data = MyUser.objects.get(username=f_id)
         if new_password != renew_password:
             messages.error(request, "Password mismatch")
         else:

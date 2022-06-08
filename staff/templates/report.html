@@ -89,7 +89,7 @@
 <form method="post" class="row g-3 needs-validation" >
     {% csrf_token %}
     
-    <table id='report_table' name='report_table'  class="datatable" data-page-length='100'>
+    <table id='report_table' name='report_table'  class="table" data-page-length='100'>
         <thead>
           <tr>
             
@@ -188,7 +188,20 @@
              
              {% endfor %}
             </td>
-                        
+              
+            {% for prev_arrear in prev_sem_arrears %}
+              {% if prev_arrear.0 == i.university_no %}
+              {% if semester > 1 %}
+                {% for k in previous_sem %}
+                {% if prev_arrear.1 == k %}
+                <th>{{prev_arrear.2}} </th>
+                {% endif %}
+                 
+                {% endfor %}
+                {% endif %}
+              {% endif %}
+            
+            {% endfor %}
                       
                   
                 
@@ -196,6 +209,104 @@
               </tr>
             
             {% endfor %}
+          
+         
+        
+        </tbody>
+        
+      </table>
+      <br><br>
+      <h2>No of Students enrolled : {{total_students}}</h2>
+      <table id='report_table' name='report_table'  class="table" data-page-length='100'>
+        <thead>
+          <tr>
+            
+            <th>Subject Code</th>
+            <th>Subject Name</th>
+            <th>Credit</th>
+            <th>Students Appeared</th>
+            <th>Students Passed</th>
+            <th>Students Failed </th>
+            <th>Absent</th>
+            <th>pass % by students appeared</th>
+            <th>pass % by total_students</th>
+            <th>No of O grades</th>
+
+            
+          </tr>
+        </thead>
+        <tbody>
+          
+            
+              {% for i in subject_in_sem_id %}
+              <tr>
+              {% for j in subject_data %}
+              {% if i.subject_id == j.id %}
+              <td> {{j.code}} </td>
+              <td> {{j.subject_name}} </td>
+              <td> {{j.credit}} </td>
+              <td>
+                {% for appeared in students_appeared  %}
+                  {% if appeared.0 == j.code %}
+                  {{appeared.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>
+                {% for passed in  no_of_students_passed %}
+                  {% if passed.0 == j.code %}
+                    {{passed.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+
+              <td>
+                {% for failed in no_of_students_failed %}
+                  {% if failed.0 == j.code %}
+                   {{failed.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>
+                {% for absent in absent_in_each_subject %}
+                  {% if absent.0 == j.code %}
+                   {{absent.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>
+                {% for appeared_perc in appeared_perc  %}
+                  {% if appeared_perc.0 == j.code %}
+                  
+                  {{appeared_perc.1}}
+                  {% endif %}
+                
+                {% endfor %}
+              </td>
+              <td>
+                {% for perc in pass_per_by_total %}
+                  {% if perc.0 == j.code %}
+                   {{perc.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+
+              <td>
+                {% for o_grade in no_of_o_grade %}
+                  {% if o_grade.0 == j.code %}
+                   {{o_grade.1}}
+                  {% endif %}
+                {% endfor %}
+              </td>
+
+              {% endif %}
+
+
+              {% endfor %}
+              </tr>
+              {% endfor %}
+          
+            
           
          
         
