@@ -898,7 +898,7 @@ def add_result(request, batch_id):
 
 
 # Adding the sem result
-  
+
 def add_sem_result(request, batch_id, month, year, semester):
     current_user = request.user
     user_id = current_user.username
@@ -951,9 +951,9 @@ def add_sem_result(request, batch_id, month, year, semester):
 
                 # print(x)
         print(mark_list)
-        
+
         return redirect(report, batch_id, semester)
-        #return redirect(update_class_of_tutor, batch_id=batch_id)
+        # return redirect(update_class_of_tutor, batch_id=batch_id)
     return render(request, 'add_sem_result.html',
                   {
                       'context': context,
@@ -961,7 +961,7 @@ def add_sem_result(request, batch_id, month, year, semester):
                       'subject_in_sem': subject_in_sem,
                       'all_subject': all_subject,
                       'semester_result': sem_result,
-                      'batch_scheme':batch_scheme
+                      'batch_scheme': batch_scheme
                   })
 
 
@@ -980,19 +980,18 @@ def report(request, batch_id, semester):
     result_data = semester_result.objects.filter(batch_id=batch_id, semester=semester)
     subject_data = subject.objects.all()
     subject_in_sem_id = subject_to_staff.objects.filter(semester=semester)
-    
-    previous_sem = range(1,semester)
+
+    previous_sem = range(1, semester)
     print(previous_sem)
 
     mark_report = []
-    
-    
+
     total_credit = 0
     for j in subject_in_sem_id:
         for subj in subject_data:
             if subj.id == j.subject_id:
                 total_credit += subj.credit
-    
+
     print('credit', total_credit)
     for i in student_data:
         arrears_in_current_sem = 0
@@ -1006,7 +1005,7 @@ def report(request, batch_id, semester):
                             if result.subject_id == subj.id:
                                 if result.no_of_chances == 1:
                                     if result.grade_point == 0:
-                                        arrears_in_current_sem +=1
+                                        arrears_in_current_sem += 1
                                     if result.grade_point == -1:
                                         absent += 1
                                     gpi = result.grade_point
@@ -1014,31 +1013,37 @@ def report(request, batch_id, semester):
                                         gpi = 0
                                     sgpa = sgpa + (subj.credit * gpi)
         print(i.first_name, sgpa)
-        tuple_data = (i.university_no, arrears_in_current_sem, absent, round(sgpa/total_credit, 2))
+        tuple_data = (i.university_no, arrears_in_current_sem, absent, round(sgpa / total_credit, 2))
         mark_report.append(tuple_data)
     print(mark_report)
 
-
     prev_sem_arrears = []
-    for i in range(1, 5):        
+    for i in range(1, 5):
         for j in student_data:
             count = 0
-            subject_in_sem = subject_to_staff.objects.filter(semester = i)
+            subject_in_sem = subject_to_staff.objects.filter(semester=i)
             for subject_in_sem in subject_in_sem:
-                if semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i, university_no=j.university_no).count() > 1:
-                    chance = semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i, university_no=j.university_no).count()
-                    supply = semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i, university_no=j.university_no, no_of_chances = chance, grade_point__lte = 0)
-                    if supply :
-                        count+=1
+                if semester_result.objects.filter(subject_id=subject_in_sem.subject_id, semester=i,
+                                                  university_no=j.university_no).count() > 1:
+                    chance = semester_result.objects.filter(subject_id=subject_in_sem.subject_id, semester=i,
+                                                            university_no=j.university_no).count()
+                    supply = semester_result.objects.filter(subject_id=subject_in_sem.subject_id, semester=i,
+                                                            university_no=j.university_no, no_of_chances=chance,
+                                                            grade_point__lte=0)
+                    if supply:
+                        count += 1
                 else:
-                    #chance = semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i, university_no=j.university_no).count()
-                    supply = semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i, university_no=j.university_no, no_of_chances = 1, grade_point__lte = 0)
-                    if supply :
-                        count+=1
+                    # chance = semester_result.objects.filter(subject_id = subject_in_sem.subject_id, semester=i,
+                    # university_no=j.university_no).count()
+                    supply = semester_result.objects.filter(subject_id=subject_in_sem.subject_id, semester=i,
+                                                            university_no=j.university_no, no_of_chances=1,
+                                                            grade_point__lte=0)
+                    if supply:
+                        count += 1
             arrear_tuple = (j.university_no, i, count)
             prev_sem_arrears.append(arrear_tuple)
 
-    print( prev_sem_arrears)
+    print(prev_sem_arrears)
 
     absent_in_each_subject = []
     no_of_students_passed = []
@@ -1050,83 +1055,89 @@ def report(request, batch_id, semester):
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_absent = semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point = -1).count()
-                absent_subject_tuple= (j.code, no_of_absent)
+                no_of_absent = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                              grade_point=-1).count()
+                absent_subject_tuple = (j.code, no_of_absent)
                 absent_in_each_subject.append(absent_subject_tuple)
 
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_passed= semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point__gte = 5).count()
+                no_of_passed = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                              grade_point__gte=5).count()
                 passed = (j.code, no_of_passed)
                 no_of_students_passed.append(passed)
-    
+
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_failed= semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point__lte = 0).count()
+                no_of_failed = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                              grade_point__lte=0).count()
                 failed = (j.code, no_of_failed)
                 no_of_students_failed.append(failed)
-    print('subj',no_of_students_failed)
+    print('subj', no_of_students_failed)
     for i in no_of_students_failed:
         print(i)
 
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_o_gr= semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point  = 10).count()
+                no_of_o_gr = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                            grade_point=10).count()
                 no_o_grade = (j.code, no_of_o_gr)
                 no_of_o_grade.append(no_o_grade)
-    
-    print('grade',no_of_o_grade)
+
+    print('grade', no_of_o_grade)
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_absent = semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point = -1).count()
-                appeared_subject_tuple= (j.code, total_students-no_of_absent)
+                no_of_absent = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                              grade_point=-1).count()
+                appeared_subject_tuple = (j.code, total_students - no_of_absent)
                 students_appeared.append(appeared_subject_tuple)
 
-    pass_per_by_total= []
+    pass_per_by_total = []
     for i in subject_in_sem_id:
         for j in subject_data:
             if i.subject_id == j.id:
-                no_of_passed= semester_result.objects.filter(subject_id = j.id, no_of_chances = 1, semester=semester, grade_point__gte = 5).count()
-                passed_perc = (j.code, round((no_of_passed/total_students*100), 2))
+                no_of_passed = semester_result.objects.filter(subject_id=j.id, no_of_chances=1, semester=semester,
+                                                              grade_point__gte=5).count()
+                passed_perc = (j.code, round((no_of_passed / total_students * 100), 2))
                 pass_per_by_total.append(passed_perc)
 
     appeared_perc = []
     for i in students_appeared:
         for j in no_of_students_passed:
             if i[0] == j[0]:
-                pass_perc_by_appear = round((j[1]/i[1])*100, 2)
-                tple  =(i[0], pass_perc_by_appear)
+                pass_perc_by_appear = round((j[1] / i[1]) * 100, 2)
+                tple = (i[0], pass_perc_by_appear)
                 appeared_perc.append(tple)
     print(appeared_perc)
-    
 
     return render(request, 'report.html',
-    {
-        'context':context,
-        'student_data':student_data,
-        'result_data':result_data,
-        'subject_data':subject_data,
-        'batch_data':batch_data,
-        'semester':semester,
-        'subject_in_sem_id':subject_in_sem_id,
-        'previous_sem':previous_sem,
-        'mark_report':mark_report,
-        'prev_sem_arrears' : prev_sem_arrears,
-        'absent_in_each_subject':absent_in_each_subject,
-        'no_of_students_passed':no_of_students_passed,
-        'no_of_students_failed':no_of_students_failed,
-        'no_of_o_grade':no_of_o_grade,
-        'failed_only_this_subj':failed_only_this_subj,
-        'total_students':total_students,
-        'students_appeared':students_appeared,
-        'pass_per_by_total':pass_per_by_total,
-        'appeared_perc':appeared_perc
-        
-    })
+                  {
+                      'context': context,
+                      'student_data': student_data,
+                      'result_data': result_data,
+                      'subject_data': subject_data,
+                      'batch_data': batch_data,
+                      'semester': semester,
+                      'subject_in_sem_id': subject_in_sem_id,
+                      'previous_sem': previous_sem,
+                      'mark_report': mark_report,
+                      'prev_sem_arrears': prev_sem_arrears,
+                      'absent_in_each_subject': absent_in_each_subject,
+                      'no_of_students_passed': no_of_students_passed,
+                      'no_of_students_failed': no_of_students_failed,
+                      'no_of_o_grade': no_of_o_grade,
+                      'failed_only_this_subj': failed_only_this_subj,
+                      'total_students': total_students,
+                      'students_appeared': students_appeared,
+                      'pass_per_by_total': pass_per_by_total,
+                      'appeared_perc': appeared_perc
+
+                  })
+
 
 # logout
 
