@@ -42,11 +42,17 @@ def hod_index(request):
 
     # notif = request.session['notif']
 
+    years = []
+    data = []
     student_count = profile_student.objects.all().count()
     batch_data = batch.objects.all()
     for i in batch_data:
-        pass
-
+        dat = i.date_of_join
+        print(dat.year)
+        years.append(dat.year)
+        st_count = profile_student.objects.filter(batch=i.id).count()
+        data.append(st_count)
+    print(years, data)
     staff_count = profile.objects.all().count()
     batch_count = batch.objects.all().count()
     return render(request, 'hod_index.html',
@@ -56,10 +62,11 @@ def hod_index(request):
                       "staff_count": staff_count,
                       "student_count": student_count,
                       'batch_count': batch_count,
+                      'years': years,
+                      'data': data,
+
                       # 'notif': notif
                   })
-
-
 
 
 # staff code
@@ -146,6 +153,7 @@ def delete_faculty(request, f_id):
         return redirect(view_faculty)
 
 
+@login_required
 def faculty_profile(request, f_id):
     # name = request.session['name']
     current_user = request.user
@@ -235,6 +243,7 @@ def faculty_profile(request, f_id):
                    "data_for_self_profile": staff_details_1})
 
 
+@login_required
 # student view
 @csrf_exempt
 def check_user_exist(request):
@@ -246,6 +255,7 @@ def check_user_exist(request):
         return HttpResponse(False)
 
 
+@login_required
 def add_student(request):
     # name = request.session['name']
     current_user = request.user
@@ -324,6 +334,7 @@ def add_student(request):
                   )
 
 
+@login_required
 def view_student(request):
     # name = request.session['name']
     current_user = request.user
@@ -396,6 +407,7 @@ def view_student(request):
 
 # batch details 
 
+@login_required
 def create_batch(request):
     # name = request.session['name']
     current_user = request.user
@@ -442,6 +454,7 @@ def create_batch(request):
                    "tutor_data": tutor_data})
 
 
+@login_required
 def view_batch(request):
     # name = request.session['name']
     current_user = request.user
@@ -458,6 +471,7 @@ def view_batch(request):
                                                "data_for_self_profile": staff_details_1, "tutor_data": tutor_data})
 
 
+@login_required
 def edit_batch(request, b_id):
     # name = request.session['name']
     current_user = request.user
@@ -544,6 +558,7 @@ def edit_batch(request, b_id):
                   })
 
 
+@login_required
 def delete_batch(request, b_id):
     # Print(join_date, class_name1)
 
@@ -570,6 +585,7 @@ def delete_batch(request, b_id):
 
 # Manage scheme
 
+@login_required
 def create_scheme(request):
     # name = request.session['name']
     current_user = request.user
@@ -595,6 +611,7 @@ def create_scheme(request):
     return render(request, 'create_scheme.html', {'context': context, "data_for_self_profile": staff_details_1})
 
 
+@login_required
 def view_scheme(request):
     # name = request.session['name']
     current_user = request.user
@@ -612,6 +629,7 @@ def view_scheme(request):
 
 # Manage Subject
 
+@login_required
 def create_subject(request):
     # name = request.session['name']
     current_user = request.user
@@ -652,6 +670,7 @@ def create_subject(request):
                   {'context': context, 'scheme_data': scheme_data, "data_for_self_profile": staff_details_1})
 
 
+
 @csrf_exempt
 def check_subject_exist(request):
     subject_code = request.POST.get('subject_code')
@@ -662,6 +681,7 @@ def check_subject_exist(request):
     else:
         return HttpResponse(False)
 
+@login_required
 
 def view_subject(request):
     # name = request.session['name']
@@ -721,6 +741,7 @@ def view_subject(request):
                    })
 
 
+@login_required
 def edit_subject(request, subject_id):
     # name = request.session['name']
     current_user = request.user
@@ -770,6 +791,7 @@ def edit_subject(request, subject_id):
                    })
 
 
+@login_required
 def assign_subject_to_staff(request):
     current_user = request.user
     staff_id = current_user.username
@@ -832,6 +854,7 @@ def assign_subject_to_staff(request):
                    })
 
 
+@login_required
 def delete_subject(request, subject_id):
     subject_for_delete = subject.objects.get(id=subject_id)
     subject_for_delete.delete()
@@ -841,6 +864,7 @@ def delete_subject(request, subject_id):
 
 # manage all batch data 
 
+@login_required
 def batch_details(request, b_id):
     current_user = request.user
     staff_id = current_user.username
@@ -853,6 +877,7 @@ def batch_details(request, b_id):
 
 # manage tutors
 
+@login_required
 def view_tutor(request):
     current_user = request.user
     staff_id = current_user.username
@@ -863,6 +888,7 @@ def view_tutor(request):
     return render(request, 'view_tutor.html', {'context': context, "data_for_self_profile": staff_details_1})
 
 
+@login_required
 def subject_wise_report(request, subject_id, batch_id):
     print(subject_id)
     current_user = request.user
@@ -937,6 +963,7 @@ def subject_wise_report(request, subject_id, batch_id):
                   })
 
 
+@login_required
 def view_student_details(request, student_id):
     current_user = request.user
     staff_id = current_user.username
@@ -1116,6 +1143,7 @@ def view_student_details(request, student_id):
                   })
 
 
+@login_required
 def hod_subject_wise_report(request, subject_id, batch_id, ):
     print(subject_id)
     current_user = request.user
@@ -1190,6 +1218,7 @@ def hod_subject_wise_report(request, subject_id, batch_id, ):
                   })
 
 
+@login_required
 def hod_view_my_subject(request):
     current_user = request.user
     user_id = current_user.username
@@ -1220,6 +1249,7 @@ def hod_view_my_subject(request):
                   })
 
 
+@login_required
 def hod_update_class(request, batch_id, subject_id):
     current_user = request.user
     user_id = current_user.username
@@ -1290,6 +1320,7 @@ def hod_update_class(request, batch_id, subject_id):
     })
 
 
+@login_required
 def hod_my_subject_add_attendance(request, batch_id, subject_id):
     current_user = request.user
     user_id = current_user.username
@@ -1355,6 +1386,7 @@ def hod_my_subject_add_attendance(request, batch_id, subject_id):
                   })
 
 
+@login_required
 def hod_my_subject_view_attendance(request, record_id, batch_id, subject_id):
     current_user = request.user
     user_id = current_user.username
@@ -1394,6 +1426,7 @@ def hod_my_subject_view_attendance(request, record_id, batch_id, subject_id):
 
 # Internal
 
+@login_required
 def hod_my_subject_add_internal(request, batch_id, subject_id):
     current_user = request.user
     user_id = current_user.username
@@ -1480,7 +1513,9 @@ def hod_my_subject_add_internal(request, batch_id, subject_id):
                   })
 
 
+
 # view_internal_result
+@login_required
 def hod_my_subject_view_internal_result(request, batch_id, subject_id):
     current_user = request.user
     user_id = current_user.username
