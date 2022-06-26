@@ -1,5 +1,6 @@
 from ast import For
 import code
+from datetime import date, datetime
 from itertools import count
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse, HttpResponseBadRequest
@@ -42,6 +43,10 @@ def hod_index(request):
     # notif = request.session['notif']
 
     student_count = profile_student.objects.all().count()
+    batch_data = batch.objects.all()
+    for i in batch_data:
+        pass
+
     staff_count = profile.objects.all().count()
     batch_count = batch.objects.all().count()
     return render(request, 'hod_index.html',
@@ -54,35 +59,7 @@ def hod_index(request):
                       # 'notif': notif
                   })
 
-    '''status = 0
-    try:
-        status_new = request.session['status']
-    except:
-        status += 1
 
-    # print(user_name)
-    # full_name = request.session['full_name']
-    # if 'user_name' == user_name:
-    #  return redirect(login.views.login)
-    # else:
-
-    if status == 0:
-        # name = request.session['name']
-        staff_id = request.session['hod_username']
-        staff_details_1 = profile.objects.get(Faculty_unique_id=staff_id)
-        name = staff_details_1.First_name + " " + staff_details_1.Last_name
-        context = {'name': name}
-        staff_count = profile.objects.all().count()
-        student_count = profile_student.objects.all().count()
-
-        #return render(request, 'hod_index.html',
-        #              {"staff_count" : staff_count, 
-                        "student_count" : student_count, 
-                        "context" : context,
-        #               "data_for_self_profile" : staff_details_1})
-        return redirect(view_faculty)
-    else:
-        return redirect(login.views.login_page)'''
 
 
 # staff code
@@ -182,7 +159,7 @@ def faculty_profile(request, f_id):
     date = str(staff_details.Date_of_Joining)
     dob = str(staff_details.Date_of_Birth)
 
-    print(staff_details.Profile_photo)
+    print(staff_details.Profile_photo.url)
 
     if 'edit_profile' in request.POST:
         first_name = request.POST.get('first_name')
@@ -518,7 +495,7 @@ def edit_batch(request, b_id):
             for result in sem_result_data:
                 print(result)
                 sem_result_tuple = (
-                i.subject_id, st_data.university_no, i.semester, result.grade_point, result.no_of_chances)
+                    i.subject_id, st_data.university_no, i.semester, result.grade_point, result.no_of_chances)
                 sem_result_list.append(sem_result_tuple)
     print(sem_result_list)
     sem_result = semester_result.objects.filter(batch_id=b_id)
@@ -850,8 +827,8 @@ def assign_subject_to_staff(request):
                    'scheme_data': scheme_data,
                    'subject_data': subject_data,
                    'faculty': faculty,
-                   'assign_subject_data':assign_subject_data,
-                   'faculty_data':faculty_data
+                   'assign_subject_data': assign_subject_data,
+                   'faculty_data': faculty_data
                    })
 
 
@@ -1210,6 +1187,377 @@ def hod_subject_wise_report(request, subject_id, batch_id, ):
                       'attendance_list': attenance_list,
                       'total_mark_list': total_mark_list,
                       "data_for_self_profile": staff_details_1
+                  })
+
+
+def hod_view_my_subject(request):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+    scheme_data = scheme.objects.all()
+    view_subject_all = subject.objects.all()
+    assign_subject_data = subject_to_staff.objects.all()
+    none = "None"
+    staff_data = profile.objects.all()
+    batch_data = batch.objects.all()
+
+    assigned_subject_to_this_staff = subject_to_staff.objects.filter(staff_id=staff_details_1.id)
+
+    return render(request, 'hod_view_my_subject.html',
+                  {
+                      'scheme_data': scheme_data,
+                      "view_subject": view_subject_all,
+                      'assign_subject_data': assign_subject_data,
+                      'none': none,
+                      'staff_data': staff_data,
+                      'batch_data': batch_data,
+                      'context': context,
+                      'subject_to_this_staff': assigned_subject_to_this_staff,
+                      "data_for_self_profile": staff_details_1
+                  })
+
+
+def hod_update_class(request, batch_id, subject_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+
+    # print(batch_id, subject_id)
+    batch_id = int(batch_id)
+    subject_id = int(subject_id)
+
+    staff_id = staff_details_1.id
+    check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+
+    subject_data = subject.objects.all()
+    student_data = profile_student.objects.all()
+    batch_data = batch.objects.all()
+    staff_data = profile.objects.all()
+    att_record = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id)
+    subject_to_staff_data = subject_to_staff.objects.filter(batch_id=batch_id, subject_id=subject_id)
+
+    from datetime import date
+    today = date.today()
+
+    check_today_attendance_marked = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id,
+                                                                     date=today)
+    if check_today_attendance_marked:
+        marked = True
+    else:
+        marked = False
+
+    for i in batch_data:
+        # Join date
+        date = str(i.date_of_join)
+
+    if 'assign' in request.POST:
+        # request.session['batch_id'] = batch_id
+        # request.session['subject_id'] = subject_id
+        return redirect(hod_my_subject_add_attendance, batch_id, subject_id)
+
+    if 'internal' in request.POST:
+        # request.session['batch_id'] = batch_id
+        # request.session['subject_id'] = subject_id
+        return redirect(hod_my_subject_add_internal, batch_id, subject_id)
+
+    if 'result' in request.POST:
+        # request.session['batch_id'] = batch_id
+        # request.session['subject_id'] = subject_id
+        return redirect(hod_my_subject_view_internal_result, batch_id, subject_id)
+
+    # if 'view_attendance' in request.POST:
+    #    return redirect(view_attendance, batch_id, subject_id, )
+
+    return render(request, 'hod_update_class.html', {
+        'context': context,
+        'check_subject_exist': check_subject_exist,
+        'subject_data': subject_data,
+        'student_data': student_data,
+        'batch_data': batch_data,
+        'staff_data': staff_data,
+        'date': date,
+        'attendance_record': att_record,
+        'marked': marked,
+        'subject_to_staff_data': subject_to_staff_data,
+        "data_for_self_profile": staff_details_1
+
+    })
+
+
+def hod_my_subject_add_attendance(request, batch_id, subject_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+
+    # batch_id = request.session['batch_id']
+    # subject_id = request.session['subject_id']
+
+    student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
+    subject_data = subject.objects.filter(id=subject_id)
+    batch_data = batch.objects.filter(id=batch_id)
+
+    staff_id = staff_details_1.id
+    check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+    for i in check_subject_exist:
+        sem = i.semester
+
+    if request.method == 'POST':
+        today = date.today()
+        from_time = request.POST.get('from_time')
+        end_time = request.POST.get('end_time')
+        no_of_hours = request.POST.get('no_of_hours')
+
+        from_time = datetime.strptime(from_time, '%H:%M')
+        end_time = datetime.strptime(end_time, '%H:%M')
+        print(from_time, end_time, type(from_time), type(end_time))
+        no_of_hours = int(no_of_hours)
+
+        att_record = attendance_record.objects.filter(date=today, from_time=from_time, subject_id=subject_id,
+                                                      batch_id=batch_id)
+
+        if att_record:
+            messages.error(request, "Attendance already Marked")
+            return redirect(hod_my_subject_add_attendance, batch_id, subject_id)
+        else:
+
+            attendance_record.objects.create(date=today, marked=True, subject_id=subject_id, batch_id=batch_id,
+                                             from_time=from_time, end_time=end_time, no_of_hours=no_of_hours)
+            record_id = attendance_record.objects.get(date=today, marked=True, subject_id=subject_id, batch_id=batch_id,
+                                                      from_time=from_time, end_time=end_time, no_of_hours=no_of_hours)
+
+            for i in student_data:
+                x = i.register_no
+                att_mark = request.POST.get(str(x))
+                # print(att_mark, type(att_mark))
+
+                attendance.objects.create(attendance_record_id=record_id.id, student_id=i.id, subject_id=subject_id,
+                                          batch_id=batch_id, present=att_mark, semester=sem)
+            messages.error(request, "Attendance successfully added")
+            return redirect('update_class', batch_id, subject_id)
+
+    return render(request, 'hod_attendance.html',
+                  {
+                      'context': context,
+                      'student_data': student_data,
+                      'subject_data': subject_data,
+                      'batch_data': batch_data,
+                      'check_subject_exist': check_subject_exist,
+                      "data_for_self_profile": staff_details_1
+                  })
+
+
+def hod_my_subject_view_attendance(request, record_id, batch_id, subject_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+
+    record_id = int(record_id)
+    batch_id = int(batch_id)
+    subject_id = int(subject_id)
+    print(record_id, batch_id, subject_id)
+
+    attendance_data = attendance.objects.filter(attendance_record_id=record_id)
+    for i in attendance_data:
+        print(i.present, type(i.present))
+    attendance_record_data = attendance_record.objects.filter(id=record_id)
+    student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
+    subject_data = subject.objects.filter(id=subject_id)
+    batch_data = batch.objects.filter(id=batch_id)
+
+    staff_id = staff_details_1.id
+    check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+
+    return render(request, 'hod_view_attendance.html',
+                  {
+                      'context': context,
+                      'attendance_data': attendance_data,
+                      'student_data': student_data,
+                      'subject_data': subject_data,
+                      'batch_data': batch_data,
+                      'check_subject_exist': check_subject_exist,
+                      'attendance_record_data': attendance_record_data,
+                      "data_for_self_profile": staff_details_1
+                  })
+
+
+# Internal
+
+def hod_my_subject_add_internal(request, batch_id, subject_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+
+    # batch_id = request.session['batch_id']
+    # subject_id = request.session['subject_id']
+
+    student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
+    subject_data = subject.objects.filter(id=subject_id)
+    batch_data = batch.objects.filter(id=batch_id)
+
+    staff_id = staff_details_1.id
+    check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+    internal_mark = Internal_mark.objects.filter()
+
+    for i in check_subject_exist:
+        sem = i.semester
+
+    if 'internal' in request.POST:
+        for i in student_data:
+            x = i.roll_no
+            mark = request.POST.getlist(str(x))
+            print(mark)
+
+            exist_ass1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                      exam_type='Assignment 1').count()
+            exist_ass2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                      exam_type='Assignment 2').count()
+            exist_internal1 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                           exam_type='Internal 1').count()
+            exist_internal2 = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                           exam_type='Internal 2').count()
+            print(exist_ass1, exist_ass2, exist_internal1, exist_internal2)
+            if exist_ass1 > 0:
+                update_ass1 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                        exam_type='Assignment 1')
+                update_ass1.mark = mark[0]
+                update_ass1.save()
+
+            if exist_ass2 > 0:
+                update_ass2 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                        exam_type='Assignment 2')
+                update_ass2.mark = mark[1]
+                update_ass2.save()
+
+            if exist_internal1 > 0:
+                update_internal1 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                             exam_type='Internal 1')
+                update_internal1.mark = mark[2]
+                update_internal1.save()
+
+            if exist_internal2 > 0:
+                update_internal2 = Internal_mark.objects.get(student_id=i.id, subject_id=subject_id, semester=sem,
+                                                             exam_type='Internal 2')
+                update_internal2.mark = mark[3]
+                update_internal2.save()
+
+            if exist_ass1 == 0 and exist_ass2 == 0 and exist_internal1 == 0 and exist_internal2 == 0:
+                Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[0],
+                                             exam_type='Assignment 1')
+                Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[1],
+                                             exam_type='Assignment 2')
+                Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[2],
+                                             exam_type='Internal 1')
+                Internal_mark.objects.create(student_id=i.id, subject_id=subject_id, semester=sem, mark=mark[3],
+                                             exam_type='Internal 2')
+
+        return redirect('hod_update_class', batch_id, subject_id)
+
+    return render(request, 'hod_internal.html',
+                  {
+                      'context': context,
+                      'student_data': student_data,
+                      'subject_data': subject_data,
+                      'batch_data': batch_data,
+                      'check_subject_exist': check_subject_exist,
+                      'internal_mark': internal_mark,
+                      "data_for_self_profile": staff_details_1
+
+                  })
+
+
+# view_internal_result
+def hod_my_subject_view_internal_result(request, batch_id, subject_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details_1 = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details_1.First_name + " " + staff_details_1.Last_name
+    context = {'name': fullname}
+
+    # batch_id = request.session['batch_id']
+    # subject_id = request.session['subject_id']
+
+    student_data = profile_student.objects.filter(batch=batch_id).order_by('roll_no')
+    subject_data = subject.objects.filter(id=subject_id)
+    batch_data = batch.objects.filter(id=batch_id)
+
+    staff_id = staff_details_1.id
+    check_subject_exist = subject_to_staff.objects.filter(batch_id=batch_id, staff_id=staff_id, subject_id=subject_id)
+    internal_mark = Internal_mark.objects.filter()
+
+    total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id).aggregate(
+        Sum('no_of_hours'))
+
+    attendance_record_data = attendance_record.objects.filter(batch_id=batch_id, subject_id=subject_id)
+    total_hour = total_attendance['no_of_hours__sum']
+    if total_hour == None:
+        messages.error(request, "Attendance not entered ")
+        return redirect(hod_update_class, batch_id, subject_id)
+    # print(total_attendance, total_hour, type(total_hour))
+
+    attendance_data = attendance.objects.filter(batch_id=batch_id, subject_id=subject_id)
+
+    attenance_list = []
+    for i in student_data:
+        hour = 0
+        for j in attendance_data:
+            if i.id == j.student_id:
+                if j.present == True:
+                    id1 = j.attendance_record_id
+                    # print('id',id1, type(id1))
+                    no_of_hours_taken = attendance_record.objects.get(id=id1)
+
+                    hour = hour + no_of_hours_taken.no_of_hours
+        percentage_attendance = (hour / total_hour) * 100
+        # print(i.first_name, hour)
+        att_tuple = (i.register_no, percentage_attendance)
+        attenance_list.append(att_tuple)
+
+    mark_data = Internal_mark.objects.filter(subject_id=subject_id)
+
+    total_mark_list = []
+    for i in student_data:
+        for j in mark_data:
+            if i.id == j.student_id:
+                sum_of_mark = Internal_mark.objects.filter(student_id=i.id, subject_id=subject_id).aggregate(
+                    Sum('mark'))
+                total_internal = sum_of_mark['mark__sum']
+                mark_tupple = (i.register_no, total_internal)
+                # x print(mark_tupple)
+        total_mark_list.append(mark_tupple)
+        # total_mark_list.append(mark_tupple)
+
+    print(total_mark_list)
+
+    return render(request, 'hod_internal_result.html',
+                  {
+                      'context': context,
+                      'student_data': student_data,
+                      'subject_data': subject_data,
+                      'batch_data': batch_data,
+                      'check_subject_exist': check_subject_exist,
+                      'internal_mark': internal_mark,
+                      'attendance_data': attendance_data,
+                      'attendance_record_data': attendance_record_data,
+                      'attendance_list': attenance_list,
+                      'total_mark_list': total_mark_list,
+                      "data_for_self_profile": staff_details_1
+
                   })
 
 

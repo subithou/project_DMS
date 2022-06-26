@@ -979,7 +979,7 @@ def report(request, batch_id, semester):
     student_data = profile_student.objects.filter(batch=batch_id)
     result_data = semester_result.objects.filter(batch_id=batch_id, semester=semester)
     subject_data = subject.objects.all()
-    subject_in_sem_id = subject_to_staff.objects.filter(semester=semester)
+    subject_in_sem_id = subject_to_staff.objects.filter(semester=semester, batch_id=batch_id)
 
     previous_sem = range(1, semester)
     print(previous_sem)
