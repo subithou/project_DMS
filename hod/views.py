@@ -29,6 +29,31 @@ from autoscraper import AutoScraper
 
 @login_required
 def hod_index(request):
+    url = 'https://ktu.edu.in/eu/core/announcements.htm'
+
+    try:
+        # url = 'https://ktu.edu.in/home.htm'
+
+        wanted_list = ['ANNOUNCEMENTS', 'Dec 24, 2021', 'Exam Registration opened - B.Tech S3 and S5 (supplementary) '
+                                                        'Jan 2022']
+        scraper = AutoScraper()
+        result = scraper.build(url, wanted_list)
+        data1 = result[0]
+        data2 = result[1]
+        data3 = result[2]
+
+        notif = {'data1': data1,
+                 'data2': data2,
+                 'data3': data3
+                 }
+        #request.session['notif'] = notif
+
+
+    except:
+
+        notif = {'data1': "KTU site cannot reach"}
+        request.session['notif'] = notif
+
     current_user = request.user
     print(current_user.id)
     # print( request.session['user'])
@@ -64,8 +89,7 @@ def hod_index(request):
                       'batch_count': batch_count,
                       'years': years,
                       'data': data,
-
-                      # 'notif': notif
+                      'notif': notif,
                   })
 
 
