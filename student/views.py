@@ -2,12 +2,14 @@ from atexit import register
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
-from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, subject_to_staff
+from hod.models import Internal_mark, attendance, attendance_record, batch, scheme, semester_result, subject, \
+    subject_to_staff
 from student.models import profile_student
 from login.models import MyUser
 import login
 
 from django.db.models import Sum, Max
+
 
 # Create your views here.
 def student_index(request):
@@ -19,8 +21,58 @@ def student_index(request):
     # id = request.session['student_id']
     context = {'name': name}
 
-    #return render(request, 'student_index.html', {'context': context})
-    return redirect(student_profile)
+    credit = 0
+    subject_data = subject.objects.all()
+    result_data_for_credit = semester_result.objects.filter(university_no=student_details_1.university_no,
+                                                            grade_point__gte=5)
+    for i in result_data_for_credit:
+        for j in subject_data:
+            if j.id == i.subject_id:
+                credit += j.credit
+
+    supply = 0
+    for i in subject_data:
+        max_chance = semester_result.objects.filter(university_no=student_details_1.university_no,
+                                                    subject_id=i.id).aggregate(Max('no_of_chances'))
+        result_data_for_supply = semester_result.objects.filter(university_no=student_details_1.university_no,
+                                                                subject_id=i.id,
+                                                                no_of_chances=max_chance['no_of_chances__max'])
+        for j in result_data_for_supply:
+            if j.grade_point < 5:
+                supply += 1
+
+    max_sem = semester_result.objects.filter(university_no=student_details_1.university_no).aggregate(Max('semester'))
+    highest_sem = max_sem['semester__max']
+    sgpa = 0
+    for i in range(1, highest_sem + 1):
+        sem_sgpa = 0
+        sem_credit = 0
+        for j in subject_data:
+            max_chance = semester_result.objects.filter(university_no=student_details_1.university_no,
+                                                        subject_id=j.id, semester=i).aggregate(Max('no_of_chances'))
+            result_data = semester_result.objects.filter(university_no=student_details_1.university_no,
+                                                         subject_id=j.id, semester=1,
+                                                         no_of_chances=max_chance['no_of_chances__max'])
+            for k in result_data:
+                if k.subject_id == j.id:
+                    if k.grade_point == -1:
+                        sem_sgpa += (j.credit * 0)
+                    else:
+                        sem_sgpa += (j.credit * k.grade_point)
+                    sem_credit += j.credit
+
+        sgpa += (sem_sgpa / sem_credit)
+
+    cgpa = sgpa / highest_sem
+
+    return render(request, 'student_index.html', {
+        'context': context,
+        'credit': credit,
+        'supply': supply,
+        'cgpa': cgpa
+    })
+    # return redirect(student_profile)
+
 
 def student_profile(request):
     # name = request.session['student_name']
@@ -64,18 +116,19 @@ def student_profile(request):
         sum_of_mark = Internal_mark.objects.filter(student_id=id, subject_id=i.subject_id).aggregate(Sum('mark'))
         total_internal = sum_of_mark['mark__sum']
         st_data = profile_student.objects.get(id=student_id)
-        mark_tupple = (i.subject_id, st_data.register_no,i.semester, total_internal)
-                # x print(mark_tupple)
+        mark_tupple = (i.subject_id, st_data.register_no, i.semester, total_internal)
+        # x print(mark_tupple)
         total_mark_list.append(mark_tupple)
 
-        total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id).aggregate(Sum('no_of_hours'))
+        total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id).aggregate(
+            Sum('no_of_hours'))
         attendance_record_data = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
         total_hour = total_attendance['no_of_hours__sum']
-        print('total_hour',total_hour, type(total_hour))
+        print('total_hour', total_hour, type(total_hour))
         attendance_data = attendance.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
 
         if total_hour == None:
-            att_tuple = (i.subject_id, st_data.register_no,i.semester, 0)
+            att_tuple = (i.subject_id, st_data.register_no, i.semester, 0)
             attendance_list.append(att_tuple)
 
         else:
@@ -83,28 +136,30 @@ def student_profile(request):
             for j in attendance_data:
                 if st_data.id == j.student_id:
                     if j.present == True:
-                        id1 =j.attendance_record_id
+                        id1 = j.attendance_record_id
                         # print('id',id1, type(id1))
                         no_of_hours_taken = attendance_record.objects.get(id=id1)
-                    
-                        hour = hour +  no_of_hours_taken.no_of_hours
-            percentage_attendance = round((hour/total_hour)*100, 2)
+
+                        hour = hour + no_of_hours_taken.no_of_hours
+            percentage_attendance = round((hour / total_hour) * 100, 2)
             print(st_data.first_name, hour)
-            att_tuple = (i.subject_id, st_data.register_no,i.semester, percentage_attendance)
+            att_tuple = (i.subject_id, st_data.register_no, i.semester, percentage_attendance)
             attendance_list.append(att_tuple)
 
-        max_chances = semester_result.objects.filter(subject_id = i.subject_id, university_no=st_data.university_no).aggregate(Max('no_of_chances')) 
-        
-        sem_result_data = semester_result.objects.filter(subject_id = i.subject_id,university_no=st_data.university_no, no_of_chances=max_chances['no_of_chances__max'])
-        
+        max_chances = semester_result.objects.filter(subject_id=i.subject_id,
+                                                     university_no=st_data.university_no).aggregate(
+            Max('no_of_chances'))
+
+        sem_result_data = semester_result.objects.filter(subject_id=i.subject_id, university_no=st_data.university_no,
+                                                         no_of_chances=max_chances['no_of_chances__max'])
+
         print(max_chances['no_of_chances__max'])
         for result in sem_result_data:
             print(result)
-            sem_result_tuple = (i.subject_id, st_data.register_no,i.semester, result.grade_point, result.no_of_chances)
+            sem_result_tuple = (i.subject_id, st_data.register_no, i.semester, result.grade_point, result.no_of_chances)
             sem_result_list.append(sem_result_tuple)
-    #print(attendance_list)    
+    # print(attendance_list)
     # print(total_mark_list)
-
 
     if 'edit_profile' in request.POST:
 
@@ -153,7 +208,7 @@ def student_profile(request):
             student_data1.save()
 
             messages.error(request, "Successfully updated")
-            #return render(request, 'student_profile.html',
+            # return render(request, 'student_profile.html',
             #              {'student_data': student_data, 'scheme_data': scheme_data, 'batch_data': batch_data,
             #               'date_dob': date_dob, 'context': context})
             return redirect(student_profile)
@@ -180,18 +235,18 @@ def student_profile(request):
 
     return render(request, 'student_profile.html',
                   {
-                    'student_data': student_data, 
-                    'scheme_data': scheme_data, 
-                    'batch_data': batch_data,
-                    'date_dob': date_dob, 
-                    'context': context,
-                    'assign_subject_data':assign_subject_data,
-                    'subject_data':subject_data,
-                    'internal_mark_data': internal_mark_data,
-                    'total_mark_list':total_mark_list,
-                    'attendance_list' : attendance_list,
-                    'sem_result_list': sem_result_list
-                })
+                      'student_data': student_data,
+                      'scheme_data': scheme_data,
+                      'batch_data': batch_data,
+                      'date_dob': date_dob,
+                      'context': context,
+                      'assign_subject_data': assign_subject_data,
+                      'subject_data': subject_data,
+                      'internal_mark_data': internal_mark_data,
+                      'total_mark_list': total_mark_list,
+                      'attendance_list': attendance_list,
+                      'sem_result_list': sem_result_list
+                  })
 
 
 # logout
