@@ -194,11 +194,13 @@ def faculty_profile(request, f_id):
     print(staff_details.Profile_photo.url)
 
     if 'edit_profile' in request.POST:
+        photo = request.POST.get('profile_photo')
+        print(photo)
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         faculty_unique_id = request.POST.get('faulty_unique_id')
         gender = request.POST.get('gender')
-
+        print(first_name)
         if gender == '0':
             messages.error(request, 'Please select the valid gender')
         else:

@@ -1,4 +1,7 @@
 from atexit import register
+
+import matplotlib as matplotlib
+from autoscraper import AutoScraper
 from django.shortcuts import render, redirect
 from django.contrib.auth import logout
 from django.contrib import messages
@@ -10,9 +13,37 @@ import login
 
 from django.db.models import Sum, Max
 
+# %matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Create your views here.
+
 def student_index(request):
+    # Create your views here.
+
+    url = 'https://ktu.edu.in/eu/core/announcements.htm'
+
+    try:
+        # url = 'https://ktu.edu.in/home.htm'
+
+        wanted_list = ['ANNOUNCEMENTS', 'Dec 24, 2021', 'Exam Registration opened - B.Tech S3 and S5 (supplementary) '
+                                                        'Jan 2022']
+        scraper = AutoScraper()
+        result = scraper.build(url, wanted_list)
+        data1 = result[0]
+        data2 = result[1]
+        data3 = result[2]
+
+        notif = {'data1': data1,
+                 'data2': data2,
+                 'data3': data3
+                 }
+        # request.session['notif'] = notif
+
+
+    except:
+
+        notif = {'data1': "KTU site cannot reach"}
     current_user = request.user
     user_id = current_user.username
 
@@ -43,6 +74,10 @@ def student_index(request):
 
     max_sem = semester_result.objects.filter(university_no=student_details_1.university_no).aggregate(Max('semester'))
     highest_sem = max_sem['semester__max']
+
+    data = []
+    sem = []
+
     sgpa = 0
     for i in range(1, highest_sem + 1):
         sem_sgpa = 0
@@ -62,14 +97,35 @@ def student_index(request):
                     sem_credit += j.credit
 
         sgpa += (sem_sgpa / sem_credit)
-
+        data.append(sgpa)
+        sem.append(i)
     cgpa = sgpa / highest_sem
+
+    x = np.array(data)
+    y = np.array(sem)
+    x = x.reshape(len(x), 1)
+
+    from sklearn.linear_model import LinearRegression
+    model = LinearRegression()
+
+    model.fit(x, y)
+    ypred = model.predict(x)
+    if highest_sem < 8:
+        sem.append(highest_sem + 1)
+        predict_sem = highest_sem + 1
+        y = (model.coef_[0] * predict_sem) + model.intercept_
+        predicted_sem = highest_sem+1
+        data.append(y)
 
     return render(request, 'student_index.html', {
         'context': context,
         'credit': credit,
         'supply': supply,
-        'cgpa': cgpa
+        'cgpa': cgpa,
+        'notif': notif,
+        'data': data,
+        'sem': sem,
+        'predicted_sem': predicted_sem
     })
     # return redirect(student_profile)
 
