@@ -114,7 +114,7 @@ def student_index(request):
         sem.append(highest_sem + 1)
         predict_sem = highest_sem + 1
         y = (model.coef_[0] * predict_sem) + model.intercept_
-        predicted_sem = highest_sem+1
+        predicted_sem = highest_sem + 1
         data.append(y)
 
     return render(request, 'student_index.html', {
@@ -167,10 +167,13 @@ def student_profile(request):
     attendance_list = []
     sem_result_list = []
 
+    st_id = student_details_1.id
     for i in assign_subject_data:
 
-        sum_of_mark = Internal_mark.objects.filter(student_id=id, subject_id=i.subject_id).aggregate(Sum('mark'))
+        sum_of_mark = Internal_mark.objects.filter(student_id=st_id, subject_id=i.subject_id).aggregate(Sum('mark'))
+        print(sum_of_mark['mark__sum'])
         total_internal = sum_of_mark['mark__sum']
+        print(total_internal)
         st_data = profile_student.objects.get(id=student_id)
         mark_tupple = (i.subject_id, st_data.register_no, i.semester, total_internal)
         # x print(mark_tupple)
@@ -215,7 +218,7 @@ def student_profile(request):
             sem_result_tuple = (i.subject_id, st_data.register_no, i.semester, result.grade_point, result.no_of_chances)
             sem_result_list.append(sem_result_tuple)
     # print(attendance_list)
-    # print(total_mark_list)
+    print(total_mark_list)
 
     if 'edit_profile' in request.POST:
 

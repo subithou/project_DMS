@@ -1139,6 +1139,114 @@ def report(request, batch_id, semester):
                   })
 
 
+def performance_analysis(request, batch_id):
+    current_user = request.user
+    user_id = current_user.username
+
+    staff_details = profile.objects.get(Faculty_unique_id=user_id)
+    fullname = staff_details.First_name + " " + staff_details.Last_name
+    context = {'name': fullname}
+
+    student_data = profile_student.objects.filter(batch=batch_id)
+
+    if request.method == 'POST':
+        sem = int(request.POST.get('semester'))
+        student_id = int(request.POST.get('student'))
+        print(sem, type(sem), student_id, type(student_id))
+        batch_data = batch.objects.get(id=batch_id)
+        scheme_id = batch_data.scheme
+        scheme_data = scheme.objects.get(id=scheme_id)
+
+        # date_dob = str(date_of_birth)  # dob can only display in html only as string type
+        assign_subject_data = subject_to_staff.objects.filter(batch_id=batch_id, semester=sem)
+        internal_mark_data = Internal_mark.objects.filter(student_id=student_id)
+        subject_data = subject.objects.all()
+        for i in internal_mark_data:
+            print(i.exam_type, i.mark)
+        total_mark_list = []
+        attendance_list = []
+        sem_result_list = []
+
+        st_id = student_id
+        for i in assign_subject_data:
+
+            sum_of_mark = Internal_mark.objects.filter(student_id=st_id, subject_id=i.subject_id).aggregate(Sum('mark'))
+            print(sum_of_mark['mark__sum'])
+            total_internal = sum_of_mark['mark__sum']
+            print(total_internal)
+            st_data = profile_student.objects.get(id=student_id)
+            mark_tupple = (i.subject_id, st_data.register_no, i.semester, total_internal)
+            # x print(mark_tupple)
+            total_mark_list.append(mark_tupple)
+
+            total_attendance = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id).aggregate(
+                Sum('no_of_hours'))
+            attendance_record_data = attendance_record.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
+            total_hour = total_attendance['no_of_hours__sum']
+            print('total_hour', total_hour, type(total_hour))
+            attendance_data = attendance.objects.filter(batch_id=batch_id, subject_id=i.subject_id)
+
+            if total_hour == None:
+                att_tuple = (i.subject_id, st_data.register_no, i.semester, 0)
+                attendance_list.append(att_tuple)
+
+            else:
+                hour = 0
+                for j in attendance_data:
+                    if st_data.id == j.student_id:
+                        if j.present == True:
+                            id1 = j.attendance_record_id
+                            # print('id',id1, type(id1))
+                            no_of_hours_taken = attendance_record.objects.get(id=id1)
+
+                            hour = hour + no_of_hours_taken.no_of_hours
+                percentage_attendance = round((hour / total_hour) * 100, 2)
+                print(st_data.first_name, hour)
+                att_tuple = (i.subject_id, st_data.register_no, i.semester, percentage_attendance)
+                attendance_list.append(att_tuple)
+
+            max_chances = semester_result.objects.filter(subject_id=i.subject_id,
+                                                         university_no=st_data.university_no).aggregate(
+                Max('no_of_chances'))
+
+            sem_result_data = semester_result.objects.filter(subject_id=i.subject_id,
+                                                             university_no=st_data.university_no,
+                                                             no_of_chances=max_chances['no_of_chances__max'])
+
+            print(max_chances['no_of_chances__max'])
+            for result in sem_result_data:
+                print(result)
+                sem_result_tuple = (
+                    i.subject_id, st_data.register_no, i.semester, result.grade_point, result.no_of_chances)
+                sem_result_list.append(sem_result_tuple)
+        print('attendance', attendance_list)
+        print('mark', total_mark_list)
+        print('sem_result', sem_result_list)
+
+        sub_name = []
+        data = []
+        for i in assign_subject_data:
+            for j in subject_data:
+                if i.subject_id == j.id:
+                    sub_name.append(str(j.code))
+                    for k in sem_result_list:
+                        if k[0] == j.id:
+                            if k[3] < 5:
+                                data.append(0)
+                            else:
+                                data.append(k[3])
+
+        print(sub_name, data)
+
+    return render(request, 'performance.html',
+                  {
+                      'context': context,
+                      'student_data': student_data,
+                      'data': data,
+                      'sub_name': sub_name
+                  })
+
+
 # logout
 
 def log_out(request):

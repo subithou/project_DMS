@@ -20,7 +20,7 @@
 
                     </div>
 
-          {% endfor %}
+        {% endfor %}
 
 
         <div class="card">
@@ -43,7 +43,8 @@
 
 
 
-
+ <form method="post">
+                {% csrf_token %}
 <!-- Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -59,14 +60,14 @@
       <div class="modal-body">
         <div class="col-xl-8">
 
-            <form method="post">
+
               <div class="col-md-8 col-lg-9">
                 <img src="http://placehold.it/180" alt="Your image" id="blah">
 
               </div>
               <br>
               <input type="file" class="form-control" id="profile_photo" name="profile_photo" accept="image/png, image/gif, image/jpeg" onchange="readURL(this);" >
-            </form>
+
 
         </div>
 
