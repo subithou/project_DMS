@@ -14,7 +14,7 @@ from hod.models import Internal_mark, attendance, attendance_record, batch, sche
     subject_to_staff
 from login.models import MyUser
 from staff.models import profile
-from student.models import parents, profile_student, qualifications
+from student.models import parents, profile_student, admission_details, local_guardian, siblings, hostel, qualification
 from hod.models import batch
 from django.contrib.auth.hashers import make_password, check_password
 from django.views.decorators.csrf import csrf_exempt
@@ -46,7 +46,7 @@ def hod_index(request):
                  'data2': data2,
                  'data3': data3
                  }
-        #request.session['notif'] = notif
+        # request.session['notif'] = notif
 
 
     except:
@@ -252,24 +252,35 @@ def faculty_profile(request, f_id):
             staff_details.phone_no = phone_no
             staff_details.save()
 
+            messages.error(request, "Successfully updated details")
+            return redirect(faculty_profile, f_id)
+
     if 'change_password' in request.POST:
         new_password = request.POST.get('new_password')
         renew_password = request.POST.get('renew_password')
 
         user_data = MyUser.objects.get(username=f_id)
+
         if new_password != renew_password:
             messages.error(request, "Password mismatch")
+            return redirect(faculty_profile, f_id)
         else:
-            user_data.password = new_password
+            hased_pswrd = make_password(new_password)
+            user_data.password = hased_pswrd
             user_data.save()
             messages.error(request, "Successfully changed password")
+            return redirect(faculty_profile, f_id)
 
     return render(request, 'faculty_profile.html',
-                  {'context': context, 'staff_details': staff_details, 'date': date, 'date_dob': dob,
-                   "data_for_self_profile": staff_details_1})
+                  {
+                   'context': context,
+                   'staff_details': staff_details,
+                   'date': date,
+                   'date_dob': dob,
+                   "data_for_self_profile": staff_details_1
+                   })
 
 
-@login_required
 # student view
 @csrf_exempt
 def check_user_exist(request):
@@ -342,11 +353,22 @@ def add_student(request):
                         first_name=first_name,
                         last_name=last_name,
                         batch=batch_id_int,
-                        scheme_id=batch_data.scheme
+                        scheme_id=batch_data.scheme,
+                        joined_semester=batch_data.semester
                     )
-                    s_id = MyUser.objects.latest('id')
-                    qualifications.objects.create(s_id=s_id.id)
-                    parents.objects.create(s_id=s_id.id)
+                    student_login = MyUser.objects.get(username=username)
+                    student_login_id = student_login.id
+                    parents.objects.create(student_id=student_login_id)
+                    local_guardian.objects.create(student_id=student_login_id)
+                    qualification.objects.create(student_id=student_login_id, name_of_exam='SSLC')
+                    qualification.objects.create(student_id=student_login_id, name_of_exam='PLUS TWO')
+
+                    hostel.objects.create(student_id=student_login_id)
+                    admission_details.objects.create(student_id=student_login_id)
+                    siblings.objects.create(student_id=student_login_id)
+                    # s_id = MyUser.objects.latest('id')
+                    # print(s_id.id)
+                    # admission_details.objects.create(student_id=s_id, joined_semester=batch_data.semester)
 
                     messages.error(request, 'Student ' + full_name + ' successfully added in ' + batch_data.class_name)
 
@@ -696,7 +718,6 @@ def create_subject(request):
                   {'context': context, 'scheme_data': scheme_data, "data_for_self_profile": staff_details_1})
 
 
-
 @csrf_exempt
 def check_subject_exist(request):
     subject_code = request.POST.get('subject_code')
@@ -707,8 +728,8 @@ def check_subject_exist(request):
     else:
         return HttpResponse(False)
 
-@login_required
 
+@login_required
 def view_subject(request):
     # name = request.session['name']
     current_user = request.user
@@ -1002,16 +1023,21 @@ def view_student_details(request, student_id):
     id = int(student_id)
     student_data = profile_student.objects.filter(id=id)
 
-    student_q_details = qualifications.objects.filter(s_id=id)
-    parent_details = parents.objects.filter(s_id=id)
+    student_q_details = qualification.objects.filter(student_id=id)
+    parent_details = parents.objects.filter(student_id=id)
 
     for i in student_data:
         batch_id = i.batch
         date_of_birth = i.date_of_birth
         name_first = i.first_name
         name_last = i.last_name
+        student_reg_no = i.register_no
 
     batch_data = batch.objects.get(id=batch_id)
+    tutor_id = batch_data.tutor_id
+    tutor_data = profile.objects.filter(id=tutor_id)
+    for tutor_data in tutor_data:
+        tutor_name = tutor_data.First_name + " " +tutor_data.Last_name
     scheme_id = batch_data.scheme
     scheme_data = scheme.objects.get(id=scheme_id)
     assign_subject_data = subject_to_staff.objects.filter(batch_id=batch_id)
@@ -1074,7 +1100,7 @@ def view_student_details(request, student_id):
     # print(attendance_list)
     # print(total_mark_list)
 
-    if 'edit_profile' in request.POST:
+    '''if 'edit_profile' in request.POST:
 
         f_name = request.POST.get('first_name')
         l_name = request.POST.get('last_name')
@@ -1128,7 +1154,7 @@ def view_student_details(request, student_id):
             student_data1.save()
 
             messages.error(request, "Successfully updated")
-            return redirect(view_student_details, student_id)
+            return redirect(view_student_details, student_id)'''
 
     if 'change_password' in request.POST:
         # current_password = request.POST.get('current_password')
@@ -1145,10 +1171,34 @@ def view_student_details(request, student_id):
         # elif current_password != user_password:
         #    messages.error(request, "incorrect old password")
         else:
-            user_data.password = new_password
+            hashed_pswrd = make_password(new_password)
+            user_data.password = hashed_pswrd
             user_data.save()
             messages.error(request, "Successfully changed password")
             return redirect(view_student_details, student_id)
+
+    student_login_data = MyUser.objects.get(username=student_reg_no)
+    student_login_id = student_login_data.id
+    # student_details_1 = profile_student.objects.get(register_no=user_id)
+    parents_data = parents.objects.filter(student_id=student_login_id)
+    guardian_data = local_guardian.objects.filter(student_id=student_login_id)
+    sslc_data = qualification.objects.filter(student_id=student_login_id, name_of_exam='SSLC')
+    plus_two_data = qualification.objects.filter(student_id=student_login_id, name_of_exam='PLUS TWO')
+    ad_data = admission_details.objects.filter(student_id=student_login_id)
+
+    print(student_id,parents_data, guardian_data, sslc_data, plus_two_data, ad_data)
+    tc_date_ = '00-00-0000'
+    for i in ad_data:
+        tc_date_ = str(i.tc_date)
+    # print('student_id', student_id, id)
+
+    sslc_data_date = '00-00-0000'
+    plus_two_data_date = '00-00-0000'
+    for i in sslc_data:
+        sslc_data_date = str(i.date_of_course)
+
+    for i in plus_two_data:
+        plus_two_data_date = str(i.date_of_course)
 
     return render(request, 'view_student_details.html',
                   {
@@ -1164,8 +1214,17 @@ def view_student_details(request, student_id):
                       'total_mark_list': total_mark_list,
                       'attendance_list': attendance_list,
                       'sem_result_list': sem_result_list,
-                      'student_q_details': student_q_details,
-                      'parent_details': parent_details
+                      'parents_data': parents_data,
+                      'guardian_data': guardian_data,
+                      'sslc_data': sslc_data,
+                      'plus_two_data': plus_two_data,
+                      'ad_data': ad_data,
+
+                      'sslc_data_date': sslc_data_date,
+                      'plus_two_data_date': plus_two_data_date,
+                      'tc_date_': tc_date_,
+                      'tutor_name': tutor_name
+                      #'student_details_1': student_details_1
                   })
 
 
@@ -1537,7 +1596,6 @@ def hod_my_subject_add_internal(request, batch_id, subject_id):
                       "data_for_self_profile": staff_details_1
 
                   })
-
 
 
 # view_internal_result

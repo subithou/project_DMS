@@ -3,31 +3,31 @@
 
 {% block content %}
 <style>
-  #datatable tbody tr:nth-child(even){
+#datatable1 tbody tr:nth-child(even){
       background-color: #f5f5f5;
   }
   @media(max-width: 746px){
-      .datatable thead{
+      #datatable1 thead{
           display: none;
       }
-  
-      #datatable, #datatable tbody, #datatable tr, #datatable td{
+
+      #datatable1, #datatable1 tbody, #datatable1 tr, #datatable1 td{
           display: block;
           width: 100%;
       }
-      #datatable tr{
+      #datatable1 tr{
           margin-bottom:15px;
           padding-left: 50%;
           text-align: left;
 
       }
-      #datatable td{
+      #datatable1 td{
           text-align: relative;
-          padding-left: 50%;
+          padding-left: 5%;
           text-align: relative;
       }
 
-      #datatable td::before{
+      #datatable1 td::before{
           content: attr(data-label);
           position: absolute;
           left:0;
@@ -37,59 +37,59 @@
           font-weight: bold;
           text-align: left;
       }
-      
-      #datatable td:nth-of-type(1):before { content: "ROLL NO"; }
-      #datatable td:nth-of-type(2):before { content: "ADMISSION NO"; }
-      #datatable td:nth-of-type(3):before { content: "NAME"; }
-      #datatable td:nth-of-type(4):before { content: "PHONE NO"; }
-      #datatable td:nth-of-type(5):before { content: "EMAIL"; }
-     
+
+      #datatable1 td:nth-of-type(1):before { content: "ROLL NO"; }
+      #datatable1 td:nth-of-type(2):before { content: "ADMISSION NO"; }
+      #datatable1 td:nth-of-type(3):before { content: "NAME"; }
+      #datatable1 td:nth-of-type(4):before { content: "PHONE NO"; }
+      #datatable1 td:nth-of-type(5):before { content: "EMAIL"; }
+      #datatable1 td:nth-of-type(6):before { content: " "; }
+
+
   }
-  
-    .datatable tbody tr:nth-child(even){
+
+    #datatable2 tbody tr:nth-child(even){
         background-color: #f5f5f5;
     }
     @media(max-width: 746px){
-        .datatable thead{
+        #datatable2 thead{
             display: none;
         }
-    
-        .datatable, .datatable tbody, .datatable tr, .datatable td{
+
+        #datatable2, #datatable2 tbody, #datatable2 tr, #datatable2 td{
             display: block;
             width: 100%;
         }
-        .datatable tr{
+        #datatable2 tr{
             margin-bottom:15px;
-            padding-left: 50%;
+            padding-left: 5%;
             text-align: left;
-  
+
         }
-        .datatable td{
+        #datatable2 td{
             text-align: relative;
             padding-left: 50%;
             text-align: relative;
         }
-        .datatable td::before{
+        #datatable2 td::before{
             content: attr(data-label);
             position: absolute;
             left:0;
             width: 50%;
-            padding-left: 30px;
+            padding-left: 20%;
             font-size:15px;
             font-weight: bold;
             text-align: left;
         }
-        td:nth-of-type(1):before { content: "SI NO"; }
-        td:nth-of-type(2):before { content: "CLASS"; }
-        td:nth-of-type(3):before { content: "DATE OF JOIN"; }
-        td:nth-of-type(4):before { content: "SEMESTER"; }
-        td:nth-of-type(5):before { content: "SCHEME"; }
-        td:nth-of-type(6):before { content: "EDIT"; }
-        
+       #datatable2 td:nth-of-type(1):before { content: "SI NO"; }
+       #datatable2 td:nth-of-type(2):before { content: "CODE"; }
+       #datatable2 td:nth-of-type(3):before { content: "NAME"; }
+       #datatable2 td:nth-of-type(4):before { content: "CREDIT"; }
+       #datatable2 td:nth-of-type(5):before { content: "FACULTY"; }
+       #datatable2 td:nth-of-type(6):before { content: " "; }
+
     }
-  
-  
-  
+
 
 
 </style>
@@ -113,10 +113,11 @@
 <br><br>
       <!-- edit form column -->
      <div class="card">
+     <br>
+          <a href="#"><button class="btn btn-primary btn-sm" style="float: right;display: inline"> Performance analysis</button></a>
 
       <div class="card-body">
       <br/>
-          <a href="{% url 'performance_analysis' batch_id=batch_data.id %}"><button class="btn btn-primary btn-sm" style="float: right;display: inline"> Performance analysis</button></a>
 
 
           <br>
@@ -161,7 +162,7 @@
                     </div>
 
                     <div class="col-6">
-                      <label for="yourName" class="col-sm-2 col-form-label">Date of join</label>
+                      <label for="yourName" class="col-sm-6 col-form-label">Date of join</label>
                       <input type="date" value={{ date }} name="date_of_join"  class="form-control" id="last_name" readonly required>
 
                     </div>
@@ -340,8 +341,8 @@
                   </button>
                 </h2>
                 <div id="collapseOne" class="accordion-collapseed collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                  <div class="accordion-body">
-                    <table class="datatable">
+                  <div class="accordion-body table-responsive">
+                    <table class="datatable " id="datatable1">
                       <br>
                         <thead>
                           <tr>
@@ -398,7 +399,7 @@
                         <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
 
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -457,7 +458,7 @@
                         </h2>
                         <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -514,8 +515,8 @@
                           </button>
                         </h2>
                         <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
-                            <table class="datatable">
+                          <div class="accordion-body ">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -573,7 +574,7 @@
                         </h2>
                         <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="heading13" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -631,7 +632,7 @@
                         </h2>
                         <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="heading14" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -688,7 +689,7 @@
                         </h2>
                         <div id="collapse15" class="accordion-collapse collapse" aria-labelledby="heading15" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -747,7 +748,7 @@
                         </h2>
                         <div id="collapse16" class="accordion-collapse collapse" aria-labelledby="heading16" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable" id="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -810,7 +811,7 @@
                         </h2>
                         <div id="collapse17" class="accordion-collapse collapse" aria-labelledby="heading17" data-bs-parent="#accordionExample1">
                           <div class="accordion-body">
-                            <table class="datatable">
+                            <table class="datatable" id="datatable2">
                               <br>
                                 <thead>
                                   <tr>
@@ -887,7 +888,7 @@
                           </button>
                         </h2>
                         <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -1171,7 +1172,7 @@
                           </button>
                         </h2>
                         <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -1435,7 +1436,7 @@
                           </button>
                         </h2>
                         <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -1698,7 +1699,7 @@
                           </button>
                         </h2>
                         <div id="collapse13" class="accordion-collapse collapse" aria-labelledby="heading13" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive" >
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -1963,7 +1964,7 @@
                           </button>
                         </h2>
                         <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="heading14" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -2226,7 +2227,7 @@
                           </button>
                         </h2>
                         <div id="collapse15" class="accordion-collapse collapse" aria-labelledby="heading15" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -2491,7 +2492,7 @@
                           </button>
                         </h2>
                         <div id="collapse16" class="accordion-collapse collapse" aria-labelledby="heading16" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>
@@ -2755,8 +2756,9 @@
                             Semester 8
                           </button>
                         </h2>
+
                         <div id="collapse17" class="accordion-collapse collapse" aria-labelledby="heading17" data-bs-parent="#accordionExample1">
-                          <div class="accordion-body">
+                          <div class="accordion-body table-responsive">
                             <table class="datatable">
                               <br>
                                 <thead>

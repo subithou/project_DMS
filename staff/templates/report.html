@@ -146,22 +146,26 @@
                           {% if result.no_of_chances == 1 %}
                           <td>
                           {% if result.grade_point == 10 %}
-                                            O
+                                            S
                                           {% elif result.grade_point == 9 %}
                                             A+
                                           {% elif result.grade_point == 8.5 %}
                                             A
                                           {% elif result.grade_point == 8 %}
                                             B+
-                                          {% elif result.grade_point == 7 %}
+                                          {% elif result.grade_point == 7.5 %}
                                             B
-                                          {% elif result.grade_point == 6 %}
+                                          {% elif result.grade_point == 7 %}
+                                            C+
+                                          {% elif result.grade_point == 6.5 %}
                                             C
-                                          {% elif result.grade_point == 5 %}
+                                          {% elif result.grade_point == 6 %}
+                                            D
+                                          {% elif result.grade_point == 5.5 %}
                                             P
-                                            {% elif result.grade_point == -1 %}
+                                          {% elif result.grade_point == -1 %}
                                             Ab
-                                          {% elif result.grade_point < 5 %}
+                                          {% elif result.grade_point < 5.5 %}
                                             F
                                           {% endif %}
 
@@ -257,7 +261,7 @@
             <th>Absent</th>
             <th>pass % by students appeared</th>
             <th>pass % by total_students</th>
-            <th>No of O grades</th>
+            <th>No of s grades</th>
 
             
           </tr>

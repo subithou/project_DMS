@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\hod"
+    "\\hod",
+    "\\project_DMS"
   ],
-  "SelectedNode": "\\hod\\views.py",
+  "SelectedNode": "\\project_DMS\\urls.py",
   "PreviewInSolutionExplorer": false
 }

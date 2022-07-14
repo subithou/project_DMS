@@ -26,8 +26,9 @@
 
     .table td{
         text-align: relative;
-        padding-left: 50%;
+        padding-left: 5%;
         text-align: relative;
+        border-style: NONE;
     }
 
     .table td::before{
@@ -130,7 +131,7 @@
                               {% endif %}
                             {% endfor %}
                             {% endfor %}  
-                                name="{{i.roll_no}}" min="0" oninput="validity.valid||(value='');" required>
+                                name="{{i.roll_no}}" min="0" step='any' required>
                           
                         
                          
@@ -154,13 +155,13 @@
                         {% endif %}
                       {% endfor %}
                       {% endfor %}      
-                      name="{{i.roll_no}}" min="0" oninput="validity.valid||(value='');" required>
+                      name="{{i.roll_no}}" min="0" step='any' required>
                     </div>
                 </td>
 
                 <td class="count-me">
                   <div class="col-12">
-                      <input type="number"  class="form-control"  
+                      <input type="number"  class="form-control"
                       {% for j in internal_mark %}
                       {% for k in subject_data %}
                         {% if i.id == j.student_id%}
@@ -172,7 +173,7 @@
                           {% endif %}
                         {% endif %}
                       {% endfor %}
-                      {% endfor %}     name="{{i.roll_no}}" min="0" oninput="validity.valid||(value='');"  required>
+                      {% endfor %}     name="{{i.roll_no}}" min="0.0" step='any'   required />
                     </div>
                 </td>
 
@@ -190,7 +191,7 @@
                           {% endif %}
                         {% endif %}
                       {% endfor %}
-                      {% endfor %} name="{{i.roll_no}}" min="0" oninput="validity.valid||(value='');"  required>
+                      {% endfor %} name="{{i.roll_no}}" min="0.0" step='any'  required>
                     </div>
                 </td>
                 

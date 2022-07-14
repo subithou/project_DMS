@@ -111,6 +111,17 @@
    
       
 </form>
+    
+    {% for sem_result in sem_result %}
+        <table>
+        <tr>
+            <td>{{ sem_result.semester }}</td>
+            <td>{{ sem_result.month }}</td>
+            <td>{{ sem_result.year }}</td>
+        </tr>
+        </table>
+    {% endfor %}
+    
 </div>
 </div>
 </div>

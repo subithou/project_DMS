@@ -8,7 +8,27 @@ from django.contrib.auth import login
 
 
 # Create your views here.
+from django.shortcuts import render
 
+from django.shortcuts import render
+
+
+def error_404(request, exception):
+    return render(request, '404.html')
+
+
+def error_500(request, *args, **argv):
+    data = {}
+    return render(request, '500.html', data)
+
+
+def error_403(request, exception):
+    return render(request, '403.html')
+
+
+def error_400(request, exception):
+    data = {}
+    return render(request, '400.html', data)
 
 def login_page(request):
     if request.method == 'POST':
