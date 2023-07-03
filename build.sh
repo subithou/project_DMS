@@ -7,7 +7,7 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate
 
-python manage.py createsuperuser --username admin --noinput --first_name --noinput
+python manage.py createsuperuser --username admin --noinput --first_name Admin --noinput
 
 
 echo "from django.contrib.auth import get_user_model;
