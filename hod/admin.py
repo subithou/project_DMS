@@ -13,7 +13,7 @@ class Subject(admin.ModelAdmin):
 
 @admin.register(scheme)
 class Scheme(admin.ModelAdmin):
-    list_display = ('scheme')
+    list_display = ('scheme',)
 
 @admin.register(subject_to_staff)
 class Scheme(admin.ModelAdmin):
